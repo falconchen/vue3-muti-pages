@@ -1,24 +1,13 @@
-# muti-pages
+# Vue3 创建多页面项目的示例(muti-pages)
 
-## Project setup
-```
-npm install
-```
+Vue3 创建多页面项目的示例，关键在其中的vue.config.js配置,并且注意pages的文件结构。
 
-### Compiles and hot-reloads for development
+开发时
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
+路由：
+- Index：http://localhost:8080/ 
+- Task：http://localhost:8080/task 
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
