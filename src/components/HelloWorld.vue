@@ -12,4 +12,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+.hello h1{
+    color: orange;
+  }
+</style>
 
