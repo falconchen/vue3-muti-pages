@@ -7,7 +7,7 @@ module.exports = {
     ? '/vue-dist'
     : '/',
     productionSourceMap:false,
-    outputDir: process.env.OUTPUT_DIR 
+    outputDir: process.env.OUTPUT_DIR !== undefined
     ? process.env.OUTPUT_DIR
     : 'dist',
 
