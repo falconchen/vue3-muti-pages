@@ -6,7 +6,8 @@
  * import utils from '@/includes/utils.js';
  * console.log(utils.getRandomInt(100))
  */
-export default { /**
+const utils = { 
+    /**
      * 生成小于max的整型随机数
      * @param {Number} max 
      * @returns 
@@ -28,16 +29,33 @@ export default { /**
     },
 
     /**
-     * 类似PHP的trim，与js的String.trim不一样
+     * 类似PHP的trim，与js的String.trim不一样，可以去除特定的字符
+     * 如rtrim('https://example.com/','/')
      * 
      * @param {String} str 
      * @returns 
      */
-    trim(str) {
-        const re = /(^\s*)|(\s*$)/g;
-        str = str.replace(re, "");
-        return str;
+    trim(str, chars) {
+        return this.ltrim(this.rtrim(str, chars), chars);
+    },
+     
+    ltrim(str, chars) {
+        chars = chars || "\\s";
+        return str.replace(new RegExp("^[" + chars + "]+", "g"), "");
+    },
+     
+    rtrim(str, chars){
+        chars = chars || "\\s";
+        return str.replace(new RegExp("[" + chars + "]+$", "g"), "");
     },
 
-    
+    /**
+     * 当前timestamp，类似 php的time函数     
+     */
+    time() {
+        return Date.parse(new Date())/1000;
+    },
+
 }
+
+export default utils

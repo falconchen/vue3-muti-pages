@@ -1,5 +1,7 @@
 l<template>
-  <div class="tweet-box-container w3-margin-bottom">
+  
+
+  <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin">
     <form @submit.prevent="handleSubmit">
       <section class="tweet-fields tweet-content">
         <var-input          
@@ -15,7 +17,7 @@ l<template>
       </section>
 
       <section class="tweet-fields">
-        <var-uploader v-model="images" @after-read="addImage" @remove="removeImage" :maxlength="9"/>
+        <var-uploader v-model="images" @after-read="addImage" @remove="removeImage" :maxlength="3"/>
       </section>
 
       <section class="tweet-fields tweet-topics" v-if="tweetTopics.length">
@@ -47,22 +49,44 @@ l<template>
       </section>
     </form>
   </div>
+
+  <div v-else >
+    <SnsLoginSection :API_URL="API_URL"/>
+  </div>
+
 </template>
 
 <script>
-import { ref, computed } from "vue";
-//import utils from '@/includes/utils.js';
+import { ref, computed,onMounted } from "vue";
+
+import utils from '@/includes/utils.js'; //这个不会实时生效，需要重启构建
 import { Snackbar as Msg} from '@varlet/ui' // https://varlet.gitee.io/varlet-ui/#/zh-CN/snackbar
+import SnsLoginSection from '@/components/SnsLoginSection.vue';
 
 export default {
 
+  components: { SnsLoginSection },
+
   setup() {
+
+    // async  function wait(seconds) { 
+    //   await new Promise(resolve=>{
+    //     setTimeout(resolve,seconds)                    
+    //   })      
+    // }
+    
+    const API_URL = utils.rtrim(process.env.VUE_APP_API_URL,'/');
+
+    const hasLogin = ref(false)
+
     const tweetPlaceHoder = {
       blankText: "灵魂拷问：今天你动弹了吗？",
       tweetingText: "玩命动弹中...",
+      successText: "刚才你动弹了！",
     };
 
-    console.log(process.env.VUE_APP_API_URL)
+    
+    let hiToken = null
 
     let errorMsg = ''
 
@@ -74,7 +98,10 @@ export default {
 
     const images = ref([]);
     
+
+    // console.log(API_URL)
     
+
 
     const addImage = (image) => {
       
@@ -91,15 +118,19 @@ export default {
       setTimeout(
 
         ()=>{
-          fetch('https://hi.local.cellmean.com/api/images', {
-          method: 'POST',
-          mode:"cors",
-          headers:{
-            // 'Content-Type': 'multipart/form-data',
-            'Hi-Token':"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MjcwOTgyMDYsImV4cCI6MTYyOTY5MDIwNiwianRpIjoiNGFiN2VlZGItZGM0YS00YTMxLWJjY2UtZWYzMjlkZDAxOTAwIiwic3ViIjoiSElfQVVUSF9VU0VSIiwidWlkIjoxMiwic2NvcGVzIjpbImNvbGxlY3Rpb25zLmNyZWF0ZSIsImNvbGxlY3Rpb25zLnJlYWQiLCJjb2xsZWN0aW9ucy51cGRhdGUiLCJjb2xsZWN0aW9ucy5kZWxldGUiLCJjb2xsZWN0aW9ucy5saXN0IiwiY29sbGVjdGlvbnMuYWxsIl19.MhCCYExmU3c6RtfB5dIVwWr0F9ZIi4Vgg4wR6t0aU24"
-          },
+          
+          fetch(API_URL +'/api/images', {
+            method: 'POST',
+            mode:"cors",
+            headers:{
+              // 'Content-Type': 'multipart/form-data',
+               'Hi-Token':hiToken
+            },
           body: formData,
-          }).then(res => res.json())
+          })
+          .then(
+            res => res.json()
+          )
           .then(
             /**
              * 格式如下：
@@ -121,9 +152,9 @@ export default {
                 }
              */
             (res) => {
-              
+
                 if(!res.success) {                  
-                  throw Error('出错了：'+res.error.join(';'))
+                  throw Error(`${res.message} ${res.error.join(';')}`)
                 }
                 
                 image.state = 'success'
@@ -133,12 +164,12 @@ export default {
 
             err=>{
               image.state = 'error'               
-              errorMsg = err.message
+              errorMsg = '出错了：'+err.message
               Msg.error(errorMsg)
             }
             
           )
-        },3000
+        },10
 
       )
                       
@@ -151,7 +182,7 @@ export default {
     }
     
     const mediaIds = computed(
-      ()=>images.value.filter((image)=>image.state=='loading').map((image)=>image.media_id)
+      ()=>images.value.filter((image)=>image.state=='success').map((image)=>image.media_id)
     )
 
     const placehoderToggle = () => {
@@ -177,20 +208,82 @@ export default {
       //   content :content.value,
       //   images:images.value
       // }
-      const formData = new FormData()
-      formData.append('content',content.value)
-      if(images.value.length > 0) {
-        images.value.forEach((image,index)=>{
-          formData.append(`image[${index}]`, image.url)
-        })
-      }          
-      console.log(formData)       
+      // const formData = new FormData()
+      // formData.append('content',content.value)
+      // if(images.value.length > 0) {
+      //   images.value.forEach((image,index)=>{
+      //     formData.append(`image[${index}]`, image.url)
+      //   })
+      // }          
+      // console.log(formData)
+
+      const tweet = {
+        content : content.value,
+        media_ids : mediaIds.value
+      }
+      fetch(API_URL +'/api/bubbles', {
+            method: 'POST',
+            mode:"cors",
+            headers:{
+              'Content-Type':'application/json',
+               'Hi-Token':hiToken
+            },
+          body: JSON.stringify(tweet) ,
+          }).then(res => {                        
+              return res.json()
+            })
+          .then(
+            
+            (res) => {
+
+                if(!res.success) {                  
+                  throw Error(`${res.message} ${res.error.join(';')}`)
+                }else{
+                  Msg.success(`${res.message}`)
+                  contentPlaceholderText.value = tweetPlaceHoder.successText
+                  content.value = ''
+                  images.value = []
+
+                  setTimeout(()=>location.reload(),1500);
+                }
+                                
+            }
+          ).catch(
+
+            err=>{                             
+              errorMsg = '出错了：' + err.message
+              Msg.error(errorMsg)
+            }
+            
+          )
+      
+      
     }
+
+
+    //hooks
+    onMounted(() => {
+
+      const hiData = JSON.parse(localStorage.getItem("hiData"))
+      if(hiData !== undefined && hiData.token !== undefined && hiData.expires !== undefined) {
+        if( hiData.expires - utils.time() < 0){//过期        
+          localStorage.removeItem("hiData")
+          hasLogin.value = false
+        }else{          
+          hasLogin.value = true
+          hiToken = hiData.token
+        }
+      }
+
+
+    })
 
 
 
 
     return {
+      API_URL,
+      hasLogin,
       content,
       images,
       mediaIds,
