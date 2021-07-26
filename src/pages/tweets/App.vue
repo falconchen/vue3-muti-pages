@@ -167,7 +167,7 @@ export default {
             }
             
           )
-        },10
+        },1
 
       )
                       
@@ -216,9 +216,15 @@ export default {
       // console.log(formData)
 
       const tweet = {
-        content : content.value,
+        content : content.value.trim(),
         media_ids : mediaIds.value
       }
+      if(tweet.content.length == 0 && tweet.media_ids.length == 0){
+        errorMsg = '至少写点什么吧...'
+        Msg.warning(errorMsg)
+        return;
+      }
+
       fetch(API_URL +'/api/bubbles', {
             method: 'POST',
             mode:"cors",
