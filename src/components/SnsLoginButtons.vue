@@ -1,5 +1,5 @@
 <template>
-  <div class="w3-section w3-margin-large sns-login-div wider">
+  
     <a
       class="3rdLogin w3-btn w3-round w3-white w3-padding-large"
       :href="API_URL + '/oauth/oschina'"
@@ -35,7 +35,7 @@
 
       Github登录
     </a>
-  </div>
+  
 </template>
 
 <script>

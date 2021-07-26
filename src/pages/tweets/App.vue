@@ -49,11 +49,9 @@ l<template>
       </section>
     </form>
   </div>
-
-  <div v-else >
-    <SnsLoginSection :API_URL="API_URL"/>
-  </div>
-
+<div class="w3-section w3-margin-large sns-login-div wider" v-else >
+    <SnsLoginButtons :API_URL="API_URL"/>
+</div>
 </template>
 
 <script>
@@ -61,11 +59,11 @@ import { ref, computed,onMounted } from "vue";
 
 import utils from '@/includes/utils.js'; //这个不会实时生效，需要重启构建
 import { Snackbar as Msg} from '@varlet/ui' // https://varlet.gitee.io/varlet-ui/#/zh-CN/snackbar
-import SnsLoginSection from '@/components/SnsLoginSection.vue';
+import SnsLoginButtons from '@/components/SnsLoginButtons.vue';
 
 export default {
 
-  components: { SnsLoginSection },
+  components: { SnsLoginButtons },
 
   setup() {
 
