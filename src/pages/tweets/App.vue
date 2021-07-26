@@ -17,7 +17,7 @@ l<template>
       </section>
 
       <section class="tweet-fields">
-        <var-uploader v-model="images" @after-read="addImage" @remove="removeImage" :maxlength="3"/>
+        <var-uploader v-model="images" :multiple="true" @after-read="addImage" @remove="removeImage" :maxlength="9"/>
       </section>
 
       <section class="tweet-fields tweet-topics" v-if="tweetTopics.length">
