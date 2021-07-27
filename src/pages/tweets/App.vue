@@ -10,8 +10,7 @@ l<template>
           @blur="placehoderToggle"
           :maxlength="tweetMaxLength"
           textarea
-          v-model="content"
-          required
+          v-model="content"          
           
         />
       </section>
@@ -39,10 +38,14 @@ l<template>
 
       <section class="tweet-fields">
 
-        <var-button type="success" class="w3-right">
-          发送动弹
-          
+        <var-button type="success" :disabled="tweetSending" class="w3-right">
+          <span v-if="!tweetSending">
+          发送动弹          
           <var-icon name="chevron-right" :size="14"/>
+          </span>
+          <span v-else>
+            正在发送...
+          </span>
           
         </var-button>
         <div class="w3-clear"></div>
@@ -73,13 +76,14 @@ export default {
     //   })      
     // }
     
+    
     const API_URL = utils.rtrim(process.env.VUE_APP_API_URL,'/');
 
     const hasLogin = ref(false)
 
     const tweetPlaceHoder = {
-      blankText: "灵魂拷问：今天你动弹了吗？",
-      tweetingText: "玩命动弹中...",
+      blankText: "不动弹，勿宁死！",
+      tweetingText: "动弹进行时",
       successText: "刚才你动弹了！",
     };
 
@@ -96,7 +100,7 @@ export default {
 
     const images = ref([]);
     
-
+    const tweetSending = ref(false)
     // console.log(API_URL)
     
 
@@ -225,6 +229,9 @@ export default {
         return;
       }
 
+      let sending = Msg.loading("玩命发送...")
+      tweetSending.value = true
+
       fetch(API_URL +'/api/bubbles', {
             method: 'POST',
             mode:"cors",
@@ -233,7 +240,8 @@ export default {
                'Hi-Token':hiToken
             },
           body: JSON.stringify(tweet) ,
-          }).then(res => {                        
+          }).then(res => {
+              
               return res.json()
             })
           .then(
@@ -243,18 +251,22 @@ export default {
                 if(!res.success) {                  
                   throw Error(`${res.message} ${res.error.join(';')}`)
                 }else{
+                  sending.clear()
+                  //tweetSending.value=false                        
                   Msg.success(`${res.message}`)
                   contentPlaceholderText.value = tweetPlaceHoder.successText
                   content.value = ''
                   images.value = []
 
-                  setTimeout(()=>location.reload(),1500);
+                  setTimeout(()=>location.reload(),1200);
                 }
                                 
             }
           ).catch(
-
+            
             err=>{                             
+              sending.clear()
+              tweetSending.value=false
               errorMsg = '出错了：' + err.message
               Msg.error(errorMsg)
             }
@@ -298,29 +310,39 @@ export default {
       tweetMaxLength,
       tweetTopics,
       handleSubmit,
+      tweetSending,
       //errorMsg
     };
   },
 };
 </script>
 
-<style scoped>
+
+<style>
+
 .tweet-box-container {
   padding: 2rem 3rem;
   background-color: #fff;
-}
-.tweet-fields:not(:first-of-type) {
-  margin-top: 1rem;
 }
 @media (max-width: 600px) {
   .tweet-box-container {
     padding: 1rem;
   }
 }
-.tweet-content {
+.tweet-box-container .tweet-fields:not(:first-of-type) {
+  margin-top: 1rem;
+}
+
+.tweet-box-container .tweet-content {
   font-size:1.1rem;
 }
-.tweet-topics span{
+.tweet-box-container .tweet-content textarea{
+    color: #333;
+    /* font-weight: 500; */
+    font-size: 1.25rem !important;
+    font-family: "Helvetica Neue","Luxi Sans","DejaVu Sans",Tahoma,"Hiragino Sans GB",STHeiti;
+}
+.tweet-box-container .tweet-topics span{
   margin-right:.5rem;
 }
 </style>>
