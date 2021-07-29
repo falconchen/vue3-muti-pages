@@ -38,13 +38,25 @@ l<template>
 
       <section class="tweet-fields">
 
-        <var-button type="success" :disabled="tweetSending" class="w3-right">
-          <span v-if="!tweetSending">
-          发送动弹          
-          <var-icon name="chevron-right" :size="14"/>
+        <var-button type="success" :disabled="imageUploading || tweetSending || tweetSendSucess" class="w3-right">
+
+          <span v-if="imageUploading">
+          图片上传中...                    
+          <var-icon name="upload" :size="14"/>
           </span>
+
+          <span v-else-if="tweetSending">
+          正在发送...                    
+          </span>
+
+          <span v-else-if="tweetSendSucess">
+          发送成功          
+          <var-icon name="check" :size="14"/>
+          </span>
+
           <span v-else>
-            正在发送...
+          发送动弹  
+          <var-icon name="chevron-right" :size="14"/>
           </span>
           
         </var-button>
@@ -87,6 +99,7 @@ export default {
       successText: "刚才你动弹了！",
     };
 
+    //const sendBtnStatus = ref({disabled:true,text:"发送动弹"}); //发送动弹按钮
     
     let hiToken = null
 
@@ -100,7 +113,10 @@ export default {
 
     const images = ref([]);
     
+    
+    const imageUploading = ref(false)
     const tweetSending = ref(false)
+    const tweetSendSucess = ref(false)
     // console.log(API_URL)
     
 
@@ -120,7 +136,7 @@ export default {
       setTimeout(
 
         ()=>{
-          
+          imageUploading.value=true;
           fetch(API_URL +'/api/images', {
             method: 'POST',
             mode:"cors",
@@ -170,7 +186,11 @@ export default {
               Msg.error(errorMsg)
             }
             
+          ).finally(
+            ()=>imageUploading.value=false
           )
+            
+          
         },1
 
       )
@@ -205,7 +225,7 @@ export default {
       return result.filter((item)=>item != false);
     });
 
-    const handleSubmit = async () =>{
+    const handleSubmit =  () =>{
       // const tweet = {
       //   content :content.value,
       //   images:images.value
@@ -252,7 +272,7 @@ export default {
                   throw Error(`${res.message} ${res.error.join(';')}`)
                 }else{
                   sending.clear()
-                  //tweetSending.value=false                        
+                  tweetSendSucess.value=true                        
                   Msg.success(`${res.message}`)
                   contentPlaceholderText.value = tweetPlaceHoder.successText
                   content.value = ''
@@ -266,12 +286,12 @@ export default {
             
             err=>{                             
               sending.clear()
-              tweetSending.value=false
+              //tweetSending.value=false
               errorMsg = '出错了：' + err.message
               Msg.error(errorMsg)
             }
             
-          )
+          ).finally(()=>tweetSending.value = false)
       
       
     }
@@ -310,7 +330,10 @@ export default {
       tweetMaxLength,
       tweetTopics,
       handleSubmit,
+
+      imageUploading,
       tweetSending,
+      tweetSendSucess,
       //errorMsg
     };
   },
