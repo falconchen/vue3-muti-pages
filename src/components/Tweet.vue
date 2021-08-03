@@ -18,13 +18,11 @@
       </div>
 
       <section class="hi-tweet-content-wrap">
-        <div class="w3-large hi-tweet-content">
-
-            {{tweet.body}}
+        <div class="w3-large hi-tweet-content" v-html="tweet.body">            
         </div>
 
         <!-- gallery begin-->
-        <div class="gallery-wrap w3-margin-top w3-margin-bottom">
+        <div class="gallery-wrap w3-margin-top w3-margin-bottom" v-if="tweet.images">
           <!-- gallery -->
           <div class="responsive w3-border" v-for="(image,index) in tweet.images" :key="index">
             <div class="gallery">
@@ -77,16 +75,17 @@
 </template>
 
 <script>
-import { toRef } from 'vue';
+//import { toRef } from 'vue';
 export default {
   name: 'Tweet',
   props: {
     tweet: Object
   },
-  setup(props) {
+  //setup(props) {
+  setup() {
 
-      const tweet2 = toRef(props, 'tweet') //tweet.likes
-      return {tweet2}
+      // const tweet2 = toRef(props, 'tweet') //tweet.likes
+      // return {tweet2}
   }
 }
 </script>
