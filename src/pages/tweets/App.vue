@@ -1,28 +1,43 @@
 l<template>
-  
+  <teleport to=".hi-list">
+
+    <li
+      v-for="bubble in pubBubbles" :key="bubble.post_id"
+      class="hi-post-type-tweet w3-border-0 w3-margin-bottom"
+      style="order: -1"
+    >    
+    <Bubble :bubble="bubble" />
+    </li>
+  </teleport>
 
   <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin">
     <form @submit.prevent="handleSubmit">
       <section class="tweet-fields tweet-content">
-        <var-input          
+        <var-input
           :placeholder="contentPlaceholderText"
           @focus="placehoderToggle"
           @blur="placehoderToggle"
           :maxlength="tweetMaxLength"
+          :rows="8"
           textarea
-          v-model="content"          
-          
+          v-model="content"
         />
       </section>
 
       <section class="tweet-fields">
-        <var-uploader v-model="images" :multiple="true" @after-read="addImage" @remove="removeImage" :maxlength="9"/>
+        <var-uploader
+          v-model="images"
+          :multiple="true"
+          @after-read="addImage"
+          @remove="removeImage"
+          :maxlength="9"
+        />
       </section>
 
       <section class="tweet-fields tweet-topics" v-if="tweetTopics.length">
-          
-          <span><var-icon name="fire" />动弹话题</span>
-          <var-chip class="tweet-topic"
+        <span><var-icon name="fire" />动弹话题</span>
+        <var-chip
+          class="tweet-topic"
           plain
           type="primary"
           v-for="topic in tweetTopics"
@@ -30,68 +45,63 @@ l<template>
         >
           {{ topic }}
         </var-chip>
-        
-        
       </section>
 
       <input type="hidden" name="media-ids" v-model="mediaIds" />
 
       <section class="tweet-fields">
-
-        <var-button type="success" :disabled="imageUploading || tweetSending || tweetSendSucess" class="w3-right">
-
+        <var-button
+          type="success"
+          :disabled="imageUploading || tweetSending || tweetSendSucess"
+          class="w3-right"
+        >
           <span v-if="imageUploading">
-          图片上传中...                    
-          <var-icon name="upload" :size="14"/>
+            图片上传中...
+            <var-icon name="upload" :size="14" />
           </span>
 
-          <span v-else-if="tweetSending">
-          正在发送...                    
-          </span>
+          <span v-else-if="tweetSending"> 正在发送... </span>
 
           <span v-else-if="tweetSendSucess">
-          发送成功          
-          <var-icon name="check" :size="14"/>
+            发送成功
+            <var-icon name="check" :size="14" />
           </span>
 
           <span v-else>
-          发送动弹  
-          <var-icon name="chevron-right" :size="14"/>
+            发送动弹
+            <var-icon name="chevron-right" :size="14" />
           </span>
-          
         </var-button>
         <div class="w3-clear"></div>
       </section>
     </form>
   </div>
-<div class="w3-section w3-margin-large sns-login-div wider" v-else >
-    <SnsLoginButtons :API_URL="API_URL"/>
-</div>
+  <div class="w3-section w3-margin-large sns-login-div wider" v-else>
+    <SnsLoginButtons :API_URL="API_URL" />
+  </div>
 </template>
 
 <script>
-import { ref, computed,onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 
-import utils from '@/includes/utils.js'; //这个不会实时生效，需要重启构建
-import { Snackbar as Msg} from '@varlet/ui' // https://varlet.gitee.io/varlet-ui/#/zh-CN/snackbar
-import SnsLoginButtons from '@/components/SnsLoginButtons.vue';
+import utils from "@/includes/utils.js"; //这个不会实时生效，需要重启构建
+import { Snackbar as Msg } from "@varlet/ui"; // https://varlet.gitee.io/varlet-ui/#/zh-CN/snackbar
+import SnsLoginButtons from "@/components/SnsLoginButtons.vue";
+import Bubble from "@/components/Bubble.vue";
 
 export default {
-
-  components: { SnsLoginButtons },
+  components: { SnsLoginButtons,Bubble },
 
   setup() {
-
-    // async  function wait(seconds) { 
+    // async  function wait(seconds) {
     //   await new Promise(resolve=>{
-    //     setTimeout(resolve,seconds)                    
-    //   })      
+    //     setTimeout(resolve,seconds)
+    //   })
     // }
-    
-    
-    const API_URL = utils.rtrim(process.env.VUE_APP_API_URL,'/');
 
-    const hasLogin = ref(false)
+    const API_URL = utils.rtrim(process.env.VUE_APP_API_URL, "/");
+
+    const hasLogin = ref(false);
 
     const tweetPlaceHoder = {
       blankText: "不动弹，勿宁死！",
@@ -100,10 +110,10 @@ export default {
     };
 
     //const sendBtnStatus = ref({disabled:true,text:"发送动弹"}); //发送动弹按钮
-    
-    let hiToken = null
 
-    let errorMsg = ''
+    let hiToken = null;
+
+    let errorMsg = "";
 
     const tweetMaxLength = 160;
 
@@ -112,43 +122,99 @@ export default {
     const content = ref("");
 
     const images = ref([]);
-    
-    
-    const imageUploading = ref(false)
-    const tweetSending = ref(false)
-    const tweetSendSucess = ref(false)
-    // console.log(API_URL)
-    
 
+    const imageUploading = ref(false);
+    const tweetSending = ref(false);
+    const tweetSendSucess = ref(false);
+    // console.log(API_URL)
+
+    const pubBubbles = ref([
+      /* {
+        "post_id": 9680,
+        "post_author": 12,
+        "post_date": "2021-07-17 12:49:03",
+        "post_date_local": "2021-07-17 20:49:03",
+        "post_content": "[重要通知] 开源中国的OpenAPI接口已关闭了动弹的大部分功能，我只能开发新的动弹网站，目前已接入OSC、微博、Github第三方登录，近日将完成基本功能，效果详见: https://d.cellmean.com",
+        "post_title": "",
+        "post_name": "23415401",
+        "post_excerpt": "[重要通知] 开源中国的OpenAPI接口已关闭了动弹的大部分功能，我只能开发新的动弹网站，目前已接入OSC、微博、Github第三方登录，近日将完成基本功能，效果详见: https://d.cellmean.com...",
+        "post_status": "publish",
+        "comment_count": 0,
+        "post_modified": "2021-07-17 12:49:45",
+        "post_type": "tweet",
+        "like_count": 0,
+        "author_name": "Falcon",
+        "tweet_like_info": {
+            "author": "Falcon",
+            "id": "23415401",
+            "authorid": 0,
+            "body": "[重要通知] 开源中国的OpenAPI接口已关闭了动弹的大部分功能，我只能开发新的动弹网站，目前已接入OSC、微博、Github第三方登录，近日将完成基本功能，效果详见: https://d.cellmean.com",
+            "portrait": "https://oscimg.oschina.net/oscnet/up-qtr2z6469a08hiocm005gfnnuta6yxly!/both/460x460?t=1569475632000",
+            "pubDate": "2021-07-17 20:49:03",
+            "commentCount": 0,
+            "likeCount": 0,
+            "oscAuthorid": 0,
+            "postId": 9680,
+            "postName": "23415401",
+            "postAuthor": 12,
+            "images": [
+                {
+                    "h": 0,
+                    "href": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
+                    "name": "up-c6rynoapidsgrswyngyb4isq122qwkb2",
+                    "thumb": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
+                    "type": "0",
+                    "w": 0
+                },
+                {
+                    "h": 0,
+                    "href": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
+                    "name": "up-upzegcum6ry2s21qpmze246gr1ht3c12",
+                    "thumb": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
+                    "type": "0",
+                    "w": 0
+                },
+                {
+                    "h": 0,
+                    "href": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0",
+                    "name": "up-d1q0renz73pifoqyd0rz914b84bc62d0",
+                    "thumb": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
+                    "type": "0",
+                    "w": 0
+                }
+            ],
+            "imgSmall": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
+            "imgBig": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0"
+        },
+        "user": {
+            "id": 12,
+            "username": "Falcon"
+        }
+    }, */
+
+    ])
 
     const addImage = (image) => {
-      
-      
-      
       // console.log(image);
-      
+
       // console.log(images.value)
 
-      image.state = 'loading'
-      const formData = new FormData()
-      formData.append('image', image.file)
+      image.state = "loading";
+      const formData = new FormData();
+      formData.append("image", image.file);
 
-      setTimeout(
-
-        ()=>{
-          imageUploading.value=true;
-          fetch(API_URL +'/api/images', {
-            method: 'POST',
-            mode:"cors",
-            headers:{
-              // 'Content-Type': 'multipart/form-data',
-               'Hi-Token':hiToken
-            },
+      setTimeout(() => {
+        imageUploading.value = true;
+        fetch(API_URL + "/api/images", {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            // 'Content-Type': 'multipart/form-data',
+            "Hi-Token": hiToken,
+          },
           body: formData,
-          })
-          .then(
-            res => res.json()
-          )
+        })
+          .then((res) => res.json())
           .then(
             /**
              * 格式如下：
@@ -170,42 +236,32 @@ export default {
                 }
              */
             (res) => {
+              if (!res.success) {
+                throw Error(`${res.message} ${res.error.join(";")}`);
+              }
 
-                if(!res.success) {                  
-                  throw Error(`${res.message} ${res.error.join(';')}`)
-                }
-                
-                image.state = 'success'
-                image.media_id = res.data.media_id                
+              image.state = "success";
+              image.media_id = res.data.media_id;
             }
-          ).catch(
-
-            err=>{
-              image.state = 'error'               
-              errorMsg = '出错了：'+err.message
-              Msg.error(errorMsg)
-            }
-            
-          ).finally(
-            ()=>imageUploading.value=false
           )
-            
-          
-        },1
+          .catch((err) => {
+            image.state = "error";
+            errorMsg = "出错了：" + err.message;
+            Msg.error(errorMsg);
+          })
+          .finally(() => (imageUploading.value = false));
+      }, 1);
+    };
 
-      )
-                      
-    }
+    const removeImage = () => {
+      Msg.success("图片已移除");
+    };
 
-    const removeImage = ()=>{
-
-      Msg.success('图片已移除')      
-
-    }
-    
-    const mediaIds = computed(
-      ()=>images.value.filter((image)=>image.state=='success').map((image)=>image.media_id)
-    )
+    const mediaIds = computed(() =>
+      images.value
+        .filter((image) => image.state == "success")
+        .map((image) => image.media_id)
+    );
 
     const placehoderToggle = () => {
       const { blankText, tweetingText } = tweetPlaceHoder;
@@ -221,11 +277,13 @@ export default {
     /*提取动弹话题*/
     const tweetTopics = computed(() => {
       const re = /#([^#]*)#/g;
-      const result = [...content.value.matchAll(re)].map((item) => item[1].replace(/^\s|\s$/,''));      
-      return result.filter((item)=>item != false);
+      const result = [...content.value.matchAll(re)].map((item) =>
+        item[1].replace(/^\s|\s$/, "")
+      );
+      return result.filter((item) => item != false);
     });
 
-    const handleSubmit =  () =>{
+    const handleSubmit = () => {
       // const tweet = {
       //   content :content.value,
       //   images:images.value
@@ -236,86 +294,89 @@ export default {
       //   images.value.forEach((image,index)=>{
       //     formData.append(`image[${index}]`, image.url)
       //   })
-      // }          
+      // }
       // console.log(formData)
 
       const tweet = {
-        content : content.value.trim(),
-        media_ids : mediaIds.value
-      }
-      if(tweet.content.length == 0 && tweet.media_ids.length == 0){
-        errorMsg = '至少写点什么吧...'
-        Msg.warning(errorMsg)
+        content: content.value.trim(),
+        media_ids: mediaIds.value,
+      };
+      if (tweet.content.length == 0 && tweet.media_ids.length == 0) {
+        errorMsg = "至少写点什么吧...";
+        Msg.warning(errorMsg);
         return;
       }
 
-      let sending = Msg.loading("玩命发送...")
-      tweetSending.value = true
+      let sending = Msg.loading("玩命发送...");
+      tweetSending.value = true;
 
-      fetch(API_URL +'/api/bubbles', {
-            method: 'POST',
-            mode:"cors",
-            headers:{
-              'Content-Type':'application/json',
-               'Hi-Token':hiToken
-            },
-          body: JSON.stringify(tweet) ,
-          }).then(res => {
-              
-              return res.json()
-            })
-          .then(
+      fetch(API_URL + "/api/bubbles", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          "Hi-Token": hiToken,
+        },
+        body: JSON.stringify(tweet),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          if (!res.success) {
+            throw Error(`${res.message} ${res.error.join(";")}`);
+          } else {
+            sending.clear();
+            tweetSendSucess.value = true;
+            Msg.success(`${res.message}`);
+            contentPlaceholderText.value = tweetPlaceHoder.successText;
+            content.value = "";
+            images.value = [];
+
+            //setTimeout(() => location.reload(), 1200);
+
+            setTimeout(() => tweetSendSucess.value = false, 1000);
             
-            (res) => {
+            //pubBubbles.value = [{post_content:"Hello new"}]
+            const post = res.data;
+            return fetch(API_URL + "/api/bubbles/"+post.post_name)
 
-                if(!res.success) {                  
-                  throw Error(`${res.message} ${res.error.join(';')}`)
-                }else{
-                  sending.clear()
-                  tweetSendSucess.value=true                        
-                  Msg.success(`${res.message}`)
-                  contentPlaceholderText.value = tweetPlaceHoder.successText
-                  content.value = ''
-                  images.value = []
+          }
+        }).then(res => {          
+          return res.json();
+        }).then(res => {
+          if (!res.success) {throw Error(res.message);}
+          let newBubble = res.data;
+          pubBubbles.value = [newBubble,...pubBubbles.value ]
+        })
 
-                  setTimeout(()=>location.reload(),1200);
-                }
-                                
-            }
-          ).catch(
-            
-            err=>{                             
-              sending.clear()
-              //tweetSending.value=false
-              errorMsg = '出错了：' + err.message
-              Msg.error(errorMsg)
-            }
-            
-          ).finally(()=>tweetSending.value = false)
-      
-      
-    }
-
+        .catch((err) => {
+          sending.clear();
+          //tweetSending.value=false
+          errorMsg = "出错了：" + err.message;
+          Msg.error(errorMsg);
+        })
+        .finally(() => (tweetSending.value = false));
+    };
 
     //hooks
     onMounted(() => {
-
-      const hiData = JSON.parse(localStorage.getItem("hiData"))
-      if(hiData !== undefined && hiData.token !== undefined && hiData.expires !== undefined) {
-        if( hiData.expires - utils.time() < 0){//过期        
-          localStorage.removeItem("hiData")
-          hasLogin.value = false
-        }else{          
-          hasLogin.value = true
-          hiToken = hiData.token
+      const hiData = JSON.parse(localStorage.getItem("hiData"));
+      if (
+        hiData !== undefined &&
+        hiData.token !== undefined &&
+        hiData.expires !== undefined
+      ) {
+        if (hiData.expires - utils.time() < 0) {
+          //过期
+          localStorage.removeItem("hiData");
+          hasLogin.value = false;
+        } else {
+          hasLogin.value = true;
+          hiToken = hiData.token;
         }
       }
-
-
-    })
-
-
-
+    });
 
     return {
       API_URL,
@@ -334,6 +395,8 @@ export default {
       imageUploading,
       tweetSending,
       tweetSendSucess,
+
+      pubBubbles,
       //errorMsg
     };
   },
@@ -342,7 +405,6 @@ export default {
 
 
 <style>
-
 .tweet-box-container {
   padding: 2rem 3rem;
   background-color: #fff;
@@ -357,16 +419,17 @@ export default {
 }
 
 .tweet-box-container .tweet-content {
-  font-size:1.1rem;
+  font-size: 1.1rem;
 }
-.tweet-box-container .tweet-content textarea{
-    color: #333;
-    /* font-weight: 500; */
-    font-size: 1.25rem !important;
-    font-family: "Helvetica Neue","Luxi Sans","DejaVu Sans",Tahoma,"Hiragino Sans GB",STHeiti;
+.tweet-box-container .tweet-content textarea {
+  color: #333;
+  /* font-weight: 500; */
+  font-size: 1.25rem !important;
+  font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma,
+    "Hiragino Sans GB", STHeiti;
 }
-.tweet-box-container .tweet-topics span{
-  margin-right:.5rem;
+.tweet-box-container .tweet-topics span {
+  margin-right: 0.5rem;
 }
 </style>>
 
