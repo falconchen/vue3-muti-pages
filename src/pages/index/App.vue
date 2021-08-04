@@ -15,6 +15,8 @@ export default {
   },
   setup() {
     const tweet = ref({})
+    const testing =false;
+    if(testing)
     tweet.value = {
             "author": "Falcon",
             "id": "23415401",

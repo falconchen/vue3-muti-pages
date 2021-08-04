@@ -1,12 +1,11 @@
 l<template>
   <teleport to=".hi-list">
-
-    <li
-      v-for="bubble in pubBubbles" :key="bubble.post_id"
-      class="hi-post-type-tweet w3-border-0 w3-margin-bottom"
-      style="order: -1"
-    >    
-    <Bubble :bubble="bubble" />
+    <li style="order: -1;padding: 0px;background: transparent;" class="hi-post-type-tweet w3-border-0 w3-margin-bottom" id="new-tweet-list">
+      <transition-group name="newTweets" tag="ul"  >
+        <li v-for="bubble in pubBubbles" :key="bubble.post_id">    
+        <Bubble :bubble="bubble" />
+        </li>
+      </transition-group>
     </li>
   </teleport>
 
@@ -99,6 +98,8 @@ export default {
     //   })
     // }
 
+
+
     const API_URL = utils.rtrim(process.env.VUE_APP_API_URL, "/");
 
     const hasLogin = ref(false);
@@ -128,69 +129,71 @@ export default {
     const tweetSendSucess = ref(false);
     // console.log(API_URL)
 
+     
     const pubBubbles = ref([
-      /* {
-        "post_id": 9680,
-        "post_author": 12,
-        "post_date": "2021-07-17 12:49:03",
-        "post_date_local": "2021-07-17 20:49:03",
-        "post_content": "[重要通知] 开源中国的OpenAPI接口已关闭了动弹的大部分功能，我只能开发新的动弹网站，目前已接入OSC、微博、Github第三方登录，近日将完成基本功能，效果详见: https://d.cellmean.com",
-        "post_title": "",
-        "post_name": "23415401",
-        "post_excerpt": "[重要通知] 开源中国的OpenAPI接口已关闭了动弹的大部分功能，我只能开发新的动弹网站，目前已接入OSC、微博、Github第三方登录，近日将完成基本功能，效果详见: https://d.cellmean.com...",
-        "post_status": "publish",
-        "comment_count": 0,
-        "post_modified": "2021-07-17 12:49:45",
-        "post_type": "tweet",
-        "like_count": 0,
-        "author_name": "Falcon",
-        "tweet_like_info": {
-            "author": "Falcon",
-            "id": "23415401",
-            "authorid": 0,
-            "body": "[重要通知] 开源中国的OpenAPI接口已关闭了动弹的大部分功能，我只能开发新的动弹网站，目前已接入OSC、微博、Github第三方登录，近日将完成基本功能，效果详见: https://d.cellmean.com",
-            "portrait": "https://oscimg.oschina.net/oscnet/up-qtr2z6469a08hiocm005gfnnuta6yxly!/both/460x460?t=1569475632000",
-            "pubDate": "2021-07-17 20:49:03",
-            "commentCount": 0,
-            "likeCount": 0,
-            "oscAuthorid": 0,
-            "postId": 9680,
-            "postName": "23415401",
-            "postAuthor": 12,
-            "images": [
-                {
-                    "h": 0,
-                    "href": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
-                    "name": "up-c6rynoapidsgrswyngyb4isq122qwkb2",
-                    "thumb": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
-                    "type": "0",
-                    "w": 0
-                },
-                {
-                    "h": 0,
-                    "href": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
-                    "name": "up-upzegcum6ry2s21qpmze246gr1ht3c12",
-                    "thumb": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
-                    "type": "0",
-                    "w": 0
-                },
-                {
-                    "h": 0,
-                    "href": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0",
-                    "name": "up-d1q0renz73pifoqyd0rz914b84bc62d0",
-                    "thumb": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
-                    "type": "0",
-                    "w": 0
-                }
-            ],
-            "imgSmall": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
-            "imgBig": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0"
-        },
-        "user": {
-            "id": 12,
-            "username": "Falcon"
-        }
-    }, */
+      
+    //    {
+    //     "post_id": 9680,
+    //     "post_author": 12,
+    //     "post_date": "2021-07-17 12:49:03",
+    //     "post_date_local": "2021-07-17 20:49:03",
+    //     "post_content": "测试Bubble",
+    //     "post_title": "",
+    //     "post_name": "23415401",
+    //     "post_excerpt": "这是摘要..",
+    //     "post_status": "publish",
+    //     "comment_count": 0,
+    //     "post_modified": "2021-07-17 12:49:45",
+    //     "post_type": "tweet",
+    //     "like_count": 0,
+    //     "author_name": "Falcon",
+    //     "tweet_like_info": {
+    //         "author": "Falcon",
+    //         "id": "23415401",
+    //         "authorid": 0,
+    //         "body": "测试Bubble一条",
+    //         "portrait": "https://oscimg.oschina.net/oscnet/up-qtr2z6469a08hiocm005gfnnuta6yxly!/both/460x460?t=1569475632000",
+    //         "pubDate": "2021-07-17 20:49:03",
+    //         "commentCount": 0,
+    //         "likeCount": 0,
+    //         "oscAuthorid": 0,
+    //         "postId": 9680,
+    //         "postName": "23415401",
+    //         "postAuthor": 12,
+    //         "images": [
+    //             {
+    //                 "h": 0,
+    //                 "href": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
+    //                 "name": "up-c6rynoapidsgrswyngyb4isq122qwkb2",
+    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
+    //                 "type": "0",
+    //                 "w": 0
+    //             },
+    //             {
+    //                 "h": 0,
+    //                 "href": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
+    //                 "name": "up-upzegcum6ry2s21qpmze246gr1ht3c12",
+    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
+    //                 "type": "0",
+    //                 "w": 0
+    //             },
+    //             {
+    //                 "h": 0,
+    //                 "href": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0",
+    //                 "name": "up-d1q0renz73pifoqyd0rz914b84bc62d0",
+    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
+    //                 "type": "0",
+    //                 "w": 0
+    //             }
+    //         ],
+    //         "imgSmall": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
+    //         "imgBig": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0"
+    //     },
+    //     "user": {
+    //         "id": 12,
+    //         "username": "Falcon"
+    //     }
+    // }, 
 
     ])
 
@@ -348,6 +351,7 @@ export default {
           if (!res.success) {throw Error(res.message);}
           let newBubble = res.data;
           pubBubbles.value = [newBubble,...pubBubbles.value ]
+          
         })
 
         .catch((err) => {
@@ -431,6 +435,40 @@ export default {
 .tweet-box-container .tweet-topics span {
   margin-right: 0.5rem;
 }
+#new-tweet-list ul {
+     padding: 0;
+    list-style: none;
+}
+#new-tweet-list >ul li{
+    padding: 0 50px;
+    margin-bottom:16px
+}
+.hi-tweet-content-wrap {
+  background-color: transparent !important;;
+}
+
+.newTweets-enter-from{
+  opacity:0;
+  /* transform: scale(0.6); */
+  transform: translateX(250px);
+  
+  
+  background-color: yellow!important;
+  
+}
+.newTweets-enter-to{
+  opacity:1;
+  /* transform: scale(1); */
+  transform: translateX(0);
+  color: auto;
+  /* background:auto; */
+  background-color: #fec!important;
+  
+}
+.newTweets-enter-active{
+  transition: all 1s ease;
+}
+
 </style>>
 
 
