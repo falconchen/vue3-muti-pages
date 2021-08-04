@@ -61,12 +61,14 @@
           {{tweet.commentCount ==0 ? '暂无评论' : `${tweet.commentCount} 评论` }}
         </a>
 
-        <!-- <a
+
+        <a
+          v-if="currentUser.uid == tweet.postAuthor"
           class="hi-dot hi-text-lighter-blue"
-          href="/post-admin/edit/046a582dbac2"
+          :href="`/post-admin/edit/${tweet.postName}`"
         >
           编辑</a
-        > -->
+        >
 
         <a class="hi-dot hi-text-lighter-blue" :href="`/p/${tweet.postName}`">查看</a>
       </div>
@@ -79,11 +81,21 @@
 export default {
   name: 'Tweet',
   props: {
-    tweet: Object
-  },
-  //setup(props) {
-  setup() {
+    tweet: Object,
 
+    currentUser: {
+      type: Object,
+      // 对象或数组默认值必须从一个工厂函数获取
+      default: function () {
+        return { uid: 0, href:'/' }
+      }
+
+    },
+    
+  },
+  
+  setup() {
+//setup(props) {
       // const tweet2 = toRef(props, 'tweet') //tweet.likes
       // return {tweet2}
   }
