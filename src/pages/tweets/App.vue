@@ -1,7 +1,8 @@
 l<template>
+  
   <teleport to=".hi-list">
-    <li style="order: -1;padding: 0px;background: transparent;" class="hi-post-type-tweet w3-border-0 w3-margin-bottom" id="new-tweet-list">
-      <transition-group name="newTweets" tag="ul"  >
+    <li class="hi-post-type-tweet w3-border-0 w3-margin-bottom" id="new-tweet-list">
+      <transition-group name="bubbleList" tag="ul"  >
         <li v-for="bubble in pubBubbles" :key="bubble.post_id">    
         <Bubble :bubble="bubble" />
         </li>
@@ -9,7 +10,9 @@ l<template>
     </li>
   </teleport>
 
-  <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin">
+  
+  <!-- <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin"> -->
+    <transition class="tweet-box-container w3-margin-bottom" v-if="hasLogin" name="fade" tag="div" appear>
     <form @submit.prevent="handleSubmit">
       <section class="tweet-fields tweet-content">
         <var-input
@@ -74,10 +77,13 @@ l<template>
         <div class="w3-clear"></div>
       </section>
     </form>
-  </div>
-  <div class="w3-section w3-margin-large sns-login-div wider" v-else>
+    </transition>
+  <!-- </div> -->
+  
+  <div class="w3-margin-large sns-login-div wider" v-else>
     <SnsLoginButtons :API_URL="API_URL" />
   </div>
+  
 </template>
 
 <script>
@@ -132,68 +138,68 @@ export default {
      
     const pubBubbles = ref([
       
-    //    {
-    //     "post_id": 9680,
-    //     "post_author": 12,
-    //     "post_date": "2021-07-17 12:49:03",
-    //     "post_date_local": "2021-07-17 20:49:03",
-    //     "post_content": "测试Bubble",
-    //     "post_title": "",
-    //     "post_name": "23415401",
-    //     "post_excerpt": "这是摘要..",
-    //     "post_status": "publish",
-    //     "comment_count": 0,
-    //     "post_modified": "2021-07-17 12:49:45",
-    //     "post_type": "tweet",
-    //     "like_count": 0,
-    //     "author_name": "Falcon",
-    //     "tweet_like_info": {
-    //         "author": "Falcon",
-    //         "id": "23415401",
-    //         "authorid": 0,
-    //         "body": "测试Bubble一条",
-    //         "portrait": "https://oscimg.oschina.net/oscnet/up-qtr2z6469a08hiocm005gfnnuta6yxly!/both/460x460?t=1569475632000",
-    //         "pubDate": "2021-07-17 20:49:03",
-    //         "commentCount": 0,
-    //         "likeCount": 0,
-    //         "oscAuthorid": 0,
-    //         "postId": 9680,
-    //         "postName": "23415401",
-    //         "postAuthor": 12,
-    //         "images": [
-    //             {
-    //                 "h": 0,
-    //                 "href": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
-    //                 "name": "up-c6rynoapidsgrswyngyb4isq122qwkb2",
-    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
-    //                 "type": "0",
-    //                 "w": 0
-    //             },
-    //             {
-    //                 "h": 0,
-    //                 "href": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
-    //                 "name": "up-upzegcum6ry2s21qpmze246gr1ht3c12",
-    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
-    //                 "type": "0",
-    //                 "w": 0
-    //             },
-    //             {
-    //                 "h": 0,
-    //                 "href": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0",
-    //                 "name": "up-d1q0renz73pifoqyd0rz914b84bc62d0",
-    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
-    //                 "type": "0",
-    //                 "w": 0
-    //             }
-    //         ],
-    //         "imgSmall": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
-    //         "imgBig": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0"
-    //     },
-    //     "user": {
-    //         "id": 12,
-    //         "username": "Falcon"
-    //     }
-    // }, 
+      /*  {
+        "post_id": 9680,
+        "post_author": 12,
+        "post_date": "2021-07-17 12:49:03",
+        "post_date_local": "2021-07-17 20:49:03",
+        "post_content": "测试Bubble",
+        "post_title": "",
+        "post_name": "23415401",
+        "post_excerpt": "这是摘要..",
+        "post_status": "publish",
+        "comment_count": 0,
+        "post_modified": "2021-07-17 12:49:45",
+        "post_type": "tweet",
+        "like_count": 0,
+        "author_name": "Falcon",
+        "tweet_like_info": {
+            "author": "Falcon",
+            "id": "23415401",
+            "authorid": 0,
+            "body": "测试Bubble一条",
+            "portrait": "https://oscimg.oschina.net/oscnet/up-qtr2z6469a08hiocm005gfnnuta6yxly!/both/460x460?t=1569475632000",
+            "pubDate": "2021-07-17 20:49:03",
+            "commentCount": 0,
+            "likeCount": 0,
+            "oscAuthorid": 0,
+            "postId": 9680,
+            "postName": "23415401",
+            "postAuthor": 12,
+            "images": [
+                {
+                    "h": 0,
+                    "href": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
+                    "name": "up-c6rynoapidsgrswyngyb4isq122qwkb2",
+                    "thumb": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
+                    "type": "0",
+                    "w": 0
+                },
+                {
+                    "h": 0,
+                    "href": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
+                    "name": "up-upzegcum6ry2s21qpmze246gr1ht3c12",
+                    "thumb": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
+                    "type": "0",
+                    "w": 0
+                },
+                {
+                    "h": 0,
+                    "href": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0",
+                    "name": "up-d1q0renz73pifoqyd0rz914b84bc62d0",
+                    "thumb": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
+                    "type": "0",
+                    "w": 0
+                }
+            ],
+            "imgSmall": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
+            "imgBig": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0"
+        },
+        "user": {
+            "id": 12,
+            "username": "Falcon"
+        }
+    },  */
 
     ])
 
@@ -435,6 +441,13 @@ export default {
 .tweet-box-container .tweet-topics span {
   margin-right: 0.5rem;
 }
+
+.w3-ul.hi-list #new-tweet-list{
+  order: -1;
+  padding: 0px;
+  background: transparent;
+  margin-bottom: 0 !important;
+}
 #new-tweet-list ul {
      padding: 0;
     list-style: none;
@@ -447,28 +460,61 @@ export default {
   background-color: transparent !important;;
 }
 
-.newTweets-enter-from{
+.bubbleList-enter-from{
   opacity:0;
-  /* transform: scale(0.6); */
-  transform: translateX(250px);
-  
-  
+  transform: translateX(250px);    
   background-color: yellow!important;
   
 }
-.newTweets-enter-to{
+.bubbleList-enter-to{
   opacity:1;
   /* transform: scale(1); */
   transform: translateX(0);
-  color: auto;
-  /* background:auto; */
-  background-color: #fec!important;
   
+  background-color: #fec!important;  
 }
-.newTweets-enter-active{
+.bubbleList-enter-active{
   transition: all 1s ease;
 }
 
+.bubbleList-leave-from{
+  opacity:1;
+  transform: translateX(0);    
+  background-color: #fec!important;  
+  
+  
+}
+.bubbleList-leave-to{
+  opacity:0;
+  /* transform: scale(1); */
+  transform: translateX(-250px);  
+  background-color: #fff!important;
+}
+.bubbleList-leave-active{
+  transition: all 1s ease;
+}
+
+
+.fade-enter-from {
+  opacity:0;
+  transform: translateY(-500px);
+}
+.fade-enter-to {
+  transform: translateY(0px);
+  opacity:1;
+}
+.fade-enter-active{
+  transition: all 1.5s ease;
+}
+.fade-leave-from {
+  opacity:1;
+}
+.fade-leave-to {
+  opacity:0;
+}
+.fade-leave-active{
+  transition: all 1.5s ease;
+}
 </style>>
 
 

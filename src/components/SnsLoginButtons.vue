@@ -1,7 +1,7 @@
 <template>
   
     <a
-      class="3rdLogin w3-btn w3-round w3-white w3-padding-large"
+      class="thirdPartyLogin w3-btn w3-round w3-white w3-padding-large"
       :href="API_URL + '/oauth/oschina'"
     >
       <img
@@ -13,7 +13,7 @@
     </a>
 
     <a
-      class="3rdLogin w3-btn w3-round w3-white w3-padding-large"
+      class="thirdPartyLogin w3-btn w3-round w3-white w3-padding-large"
       :href="API_URL + '/oauth/weibo'"
     >
       <img
@@ -24,7 +24,7 @@
       微博登录
     </a>
     <a
-      class="3rdLogin w3-btn w3-round w3-white w3-padding-large"
+      class="thirdPartyLogin w3-btn w3-round w3-white w3-padding-large"
       :href="API_URL + '/oauth/github'"
     >
       <img
