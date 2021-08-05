@@ -45,7 +45,7 @@
       <!--gallery end-->
     </section>
 
-    <div class="w3-small w3-clear w3-margin-right hi-meta">
+    <div class="w3-small w3-clear hi-meta">
       <a
         target="_blank"
         :href="`/p/${tweet.postName}`"
@@ -77,7 +77,7 @@
       >
 
       <a        
-        class="hi-dot hi-text-lighter-blue"
+        class="w3-text-white w3-grey w3-right w3-padding-small"
         href="javascript:;"
         @click.prevent="$emit('tweet:delete',tweet.postName)"
         >删除</a

@@ -142,68 +142,68 @@ export default {
      
     const pubBubbles = ref([
       
-       {
-        "post_id": 9680,
-        "post_author": 12,
-        "post_date": "2021-07-17 12:49:03",
-        "post_date_local": "2021-07-17 20:49:03",
-        "post_content": "测试Bubble",
-        "post_title": "",
-        "post_name": "23415401",
-        "post_excerpt": "这是摘要..",
-        "post_status": "publish",
-        "comment_count": 0,
-        "post_modified": "2021-07-17 12:49:45",
-        "post_type": "tweet",
-        "like_count": 0,
-        "author_name": "Falcon",
-        "tweet_like_info": {
-            "author": "Falcon",
-            "id": "23415401",
-            "authorid": 0,
-            "body": "测试Bubble一条",
-            "portrait": "https://oscimg.oschina.net/oscnet/up-qtr2z6469a08hiocm005gfnnuta6yxly!/both/460x460?t=1569475632000",
-            "pubDate": "2021-07-17 20:49:03",
-            "commentCount": 0,
-            "likeCount": 0,
-            "oscAuthorid": 0,
-            "postId": 9680,
-            "postName": "23415401",
-            "postAuthor": 12,
-            "images": [
-                {
-                    "h": 0,
-                    "href": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
-                    "name": "up-c6rynoapidsgrswyngyb4isq122qwkb2",
-                    "thumb": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
-                    "type": "0",
-                    "w": 0
-                },
-                {
-                    "h": 0,
-                    "href": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
-                    "name": "up-upzegcum6ry2s21qpmze246gr1ht3c12",
-                    "thumb": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
-                    "type": "0",
-                    "w": 0
-                },
-                {
-                    "h": 0,
-                    "href": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0",
-                    "name": "up-d1q0renz73pifoqyd0rz914b84bc62d0",
-                    "thumb": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
-                    "type": "0",
-                    "w": 0
-                }
-            ],
-            "imgSmall": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
-            "imgBig": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0"
-        },
-        "user": {
-            "id": 12,
-            "username": "Falcon"
-        }
-    }, 
+    //    {
+    //     "post_id": 9680,
+    //     "post_author": 12,
+    //     "post_date": "2021-07-17 12:49:03",
+    //     "post_date_local": "2021-07-17 20:49:03",
+    //     "post_content": "测试Bubble",
+    //     "post_title": "",
+    //     "post_name": "23415401",
+    //     "post_excerpt": "这是摘要..",
+    //     "post_status": "publish",
+    //     "comment_count": 0,
+    //     "post_modified": "2021-07-17 12:49:45",
+    //     "post_type": "tweet",
+    //     "like_count": 0,
+    //     "author_name": "Falcon",
+    //     "tweet_like_info": {
+    //         "author": "Falcon",
+    //         "id": "23415401",
+    //         "authorid": 0,
+    //         "body": "测试Bubble一条",
+    //         "portrait": "https://oscimg.oschina.net/oscnet/up-qtr2z6469a08hiocm005gfnnuta6yxly!/both/460x460?t=1569475632000",
+    //         "pubDate": "2021-07-17 20:49:03",
+    //         "commentCount": 0,
+    //         "likeCount": 0,
+    //         "oscAuthorid": 0,
+    //         "postId": 9680,
+    //         "postName": "23415401",
+    //         "postAuthor": 12,
+    //         "images": [
+    //             {
+    //                 "h": 0,
+    //                 "href": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
+    //                 "name": "up-c6rynoapidsgrswyngyb4isq122qwkb2",
+    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
+    //                 "type": "0",
+    //                 "w": 0
+    //             },
+    //             {
+    //                 "h": 0,
+    //                 "href": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
+    //                 "name": "up-upzegcum6ry2s21qpmze246gr1ht3c12",
+    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
+    //                 "type": "0",
+    //                 "w": 0
+    //             },
+    //             {
+    //                 "h": 0,
+    //                 "href": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0",
+    //                 "name": "up-d1q0renz73pifoqyd0rz914b84bc62d0",
+    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
+    //                 "type": "0",
+    //                 "w": 0
+    //             }
+    //         ],
+    //         "imgSmall": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
+    //         "imgBig": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0"
+    //     },
+    //     "user": {
+    //         "id": 12,
+    //         "username": "Falcon"
+    //     }
+    // }, 
 
     ])
 
@@ -494,11 +494,7 @@ export default {
   padding: 2rem 3rem;
   background-color: #fff;
 }
-@media (max-width: 600px) {
-  .tweet-box-container {
-    padding: 1rem;
-  }
-}
+
 .tweet-box-container .tweet-fields:not(:first-of-type) {
   margin-top: 1rem;
 }
@@ -536,6 +532,17 @@ export default {
   background-color: transparent !important;;
 }
 
+@media (max-width: 600px) {
+  .tweet-box-container {
+    padding: 1rem;
+  }
+  #new-tweet-list >ul li{
+    padding: 0 16px;
+  }
+}
+
+
+
 .bubbleList-enter-from{
   opacity:0;
   transform: translateX(250px);    
@@ -568,10 +575,10 @@ export default {
 }
 .bubbleList-leave-active{
   transition: all 1s ease;
-  position: absolute;
+  position: absolute; /** 删除bubble，旧的bullbe上移的关键点 */
 }
 
-
+/**新进的bubble，旧的bullbe下移 */
 .bubbleList-move {
   transition: all .3s ease;
 }
