@@ -1,5 +1,5 @@
 <template>  
-  <Tweet :tweet="tweet" />
+  <Tweet :tweet="tweet" @tweet:delete="$emit('bubble:delete',tweet.postName)"/>
   
 </template>
 
@@ -16,6 +16,8 @@ export default {
   props: {
     bubble: Object
   },
+  emits:['bubble:delete'],
+  
   setup(props) {
     
       // const tweet = ref( props.bubble.tweet_like_info )

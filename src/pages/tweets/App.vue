@@ -4,7 +4,7 @@ l<template>
     <li class="hi-post-type-tweet w3-border-0 w3-margin-bottom" id="new-tweet-list">
       <transition-group name="bubbleList" tag="ul"  >
         <li v-for="bubble in pubBubbles" :key="bubble.post_id">    
-        <Bubble :bubble="bubble" />
+        <Bubble :bubble="bubble" @bubble:delete="handleBubbleDelete" />
         </li>
       </transition-group>
     </li>
@@ -91,6 +91,9 @@ import { ref, computed, onMounted } from "vue";
 
 import utils from "@/includes/utils.js"; //这个不会实时生效，需要重启构建
 import { Snackbar as Msg } from "@varlet/ui"; // https://varlet.gitee.io/varlet-ui/#/zh-CN/snackbar
+import { Dialog } from '@varlet/ui'
+
+
 import SnsLoginButtons from "@/components/SnsLoginButtons.vue";
 import Bubble from "@/components/Bubble.vue";
 
@@ -104,6 +107,7 @@ export default {
     //   })
     // }
 
+    
 
 
     const API_URL = utils.rtrim(process.env.VUE_APP_API_URL, "/");
@@ -138,7 +142,7 @@ export default {
      
     const pubBubbles = ref([
       
-      /*  {
+       {
         "post_id": 9680,
         "post_author": 12,
         "post_date": "2021-07-17 12:49:03",
@@ -199,7 +203,7 @@ export default {
             "id": 12,
             "username": "Falcon"
         }
-    },  */
+    }, 
 
     ])
 
@@ -212,54 +216,54 @@ export default {
       const formData = new FormData();
       formData.append("image", image.file);
 
-      setTimeout(() => {
-        uploadingImages.value += 1;
-        fetch(API_URL + "/api/images", {
-          method: "POST",
-          mode: "cors",
-          headers: {
-            // 'Content-Type': 'multipart/form-data',
-            "Hi-Token": hiToken,
-          },
-          body: formData,
-        })
-          .then((res) => res.json())
-          .then(
-            /**
-             * 格式如下：
-             * {
-                    "success": true,
-                    "code": 200,
-                    "message": "success",
-                    "data": {
-                        "content_type": "image/png",
-                        "media_author": 12,
-                        "title": "Xnip2021-06-17_16-08-58",
-                        "updated_at": "2021-07-25 07:42:43",
-                        "created_at": "2021-07-25 07:42:43",
-                        "media_id": 8494,
-                        "origin_url": "/media/image/302/302/8494.png",
-                        "local_path": "/302/302/8494.png"
-                    },
-                    "error": []
-                }
-             */
-            (res) => {
-              if (!res.success) {
-                throw Error(`${res.message} ${res.error.join(";")}`);
+      
+      uploadingImages.value += 1;
+      fetch(API_URL + "/api/images", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          // 'Content-Type': 'multipart/form-data',
+          "Hi-Token": hiToken,
+        },
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then(
+          /**
+           * 格式如下：
+           * {
+                  "success": true,
+                  "code": 200,
+                  "message": "success",
+                  "data": {
+                      "content_type": "image/png",
+                      "media_author": 12,
+                      "title": "Xnip2021-06-17_16-08-58",
+                      "updated_at": "2021-07-25 07:42:43",
+                      "created_at": "2021-07-25 07:42:43",
+                      "media_id": 8494,
+                      "origin_url": "/media/image/302/302/8494.png",
+                      "local_path": "/302/302/8494.png"
+                  },
+                  "error": []
               }
-
-              image.state = "success";
-              image.media_id = res.data.media_id;
+            */
+          (res) => {
+            if (!res.success) {
+              throw Error(`${res.message} ${res.error.join(";")}`);
             }
-          )
-          .catch((err) => {
-            image.state = "error";
-            errorMsg = "出错了：" + err.message;
-            Msg.error(errorMsg);
-          })
-          .finally(() => (uploadingImages.value -= 1));
-      }, 1);
+
+            image.state = "success";
+            image.media_id = res.data.media_id;
+          }
+        )
+        .catch((err) => {
+          image.state = "error";
+          errorMsg = "出错了：" + err.message;
+          Msg.error(errorMsg);
+        })
+        .finally(() => (uploadingImages.value -= 1));
+      
     };
 
     const removeImage = () => {
@@ -369,6 +373,76 @@ export default {
         .finally(() => (tweetSending.value = false));
     };
 
+  
+    
+
+    
+    const handleBubbleDelete = (postName) =>{
+      /**处理动弹删除 */
+    // const actions = {
+    //   confirm: () => {
+        
+    //   },
+    //   cancel: () => Msg.error('cancel'),
+    //   close: () => Msg.info('close'),
+    // }
+
+    const onBeforeClose = (action, done) => {
+
+      if(action == 'confirm') {
+
+        const deletingMsg = Msg.loading('正在删除')        
+        fetch(API_URL + "/api/bubbles/"+postName, {
+            method: "DELETE",
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+              "Hi-Token": hiToken,
+            },            
+        })
+        .then((res) => res.json())
+        .then(
+          /**
+           * 格式如下：
+           * {
+                  "success": true,
+                  "code": 200,
+                  "message": "success",                  
+                  "error": []
+              }
+            */
+          (res) => {
+            if (!res.success) {
+              throw Error(`${res.message} ${res.error.join(";")}`);
+            }
+            pubBubbles.value = pubBubbles.value.filter((bubble)=>bubble.post_name!=postName)
+            deletingMsg.clear();
+          }
+        )
+        .catch((err) => {          
+          errorMsg = "出错了：" + err.message;
+          Msg.error(errorMsg);
+        })
+        .finally(() => {          
+          done()
+        });        
+      }
+      
+      done();
+      
+
+    }
+
+    Dialog({
+        title: '确实要删除这条动弹吗？',
+        message: '删除后不可恢复哦！',
+        onBeforeClose
+    });
+    
+        
+
+    }
+
     //hooks
     onMounted(() => {
       const hiData = JSON.parse(localStorage.getItem("hiData"));
@@ -407,6 +481,7 @@ export default {
       tweetSendSucess,
 
       pubBubbles,
+      handleBubbleDelete,
       //errorMsg
     };
   },
@@ -451,6 +526,7 @@ export default {
 #new-tweet-list ul {
      padding: 0;
     list-style: none;
+    position: relative;
 }
 #new-tweet-list >ul li{
     padding: 0 50px;
@@ -492,6 +568,7 @@ export default {
 }
 .bubbleList-leave-active{
   transition: all 1s ease;
+  position: absolute;
 }
 
 
