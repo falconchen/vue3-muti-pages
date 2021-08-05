@@ -11,8 +11,8 @@ l<template>
   </teleport>
 
   
-  <!-- <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin"> -->
-    <transition class="tweet-box-container w3-margin-bottom" v-if="hasLogin" name="fade" tag="div" appear>
+  <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin">
+    <!-- <transition class="tweet-box-container w3-margin-bottom" v-if="hasLogin" name="fade" tag="div" appear> -->
     <form @submit.prevent="handleSubmit">
       <section class="tweet-fields tweet-content">
         <var-input
@@ -54,10 +54,10 @@ l<template>
       <section class="tweet-fields">
         <var-button
           type="success"
-          :disabled="imageUploading || tweetSending || tweetSendSucess"
+          :disabled="uploadingImages > 0 || tweetSending || tweetSendSucess"
           class="w3-right"
         >
-          <span v-if="imageUploading">
+          <span v-if="uploadingImages > 0">
             图片上传中...
             <var-icon name="upload" :size="14" />
           </span>
@@ -77,8 +77,8 @@ l<template>
         <div class="w3-clear"></div>
       </section>
     </form>
-    </transition>
-  <!-- </div> -->
+    <!-- </transition> -->
+  </div>
   
   <div class="w3-margin-large sns-login-div wider" v-else>
     <SnsLoginButtons :API_URL="API_URL" />
@@ -122,7 +122,7 @@ export default {
 
     let errorMsg = "";
 
-    const tweetMaxLength = 160;
+    const tweetMaxLength = 320;
 
     const contentPlaceholderText = ref(tweetPlaceHoder.blankText);
 
@@ -130,7 +130,7 @@ export default {
 
     const images = ref([]);
 
-    const imageUploading = ref(false);
+    const uploadingImages = ref(0);
     const tweetSending = ref(false);
     const tweetSendSucess = ref(false);
     // console.log(API_URL)
@@ -213,7 +213,7 @@ export default {
       formData.append("image", image.file);
 
       setTimeout(() => {
-        imageUploading.value = true;
+        uploadingImages.value += 1;
         fetch(API_URL + "/api/images", {
           method: "POST",
           mode: "cors",
@@ -258,7 +258,7 @@ export default {
             errorMsg = "出错了：" + err.message;
             Msg.error(errorMsg);
           })
-          .finally(() => (imageUploading.value = false));
+          .finally(() => (uploadingImages.value -= 1));
       }, 1);
     };
 
@@ -402,7 +402,7 @@ export default {
       tweetTopics,
       handleSubmit,
 
-      imageUploading,
+      uploadingImages,
       tweetSending,
       tweetSendSucess,
 
@@ -495,6 +495,10 @@ export default {
 }
 
 
+.bubbleList-move {
+  transition: all .3s ease;
+}
+
 .fade-enter-from {
   opacity:0;
   transform: translateY(-500px);
@@ -504,7 +508,7 @@ export default {
   opacity:1;
 }
 .fade-enter-active{
-  transition: all 1.5s ease;
+  transition: all 1s ease;
 }
 .fade-leave-from {
   opacity:1;
@@ -513,7 +517,7 @@ export default {
   opacity:0;
 }
 .fade-leave-active{
-  transition: all 1.5s ease;
+  transition: all 1s ease;
 }
 </style>>
 
