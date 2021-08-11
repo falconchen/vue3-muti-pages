@@ -19,13 +19,31 @@ module.exports = {
     },
     
     pages: {
-        index: {
+
+        tweets: {
+            // entry for the page
+            entry: "src/pages/tweets/main.js",
+            // the source template
+            // template: "src/pages/tweets/tweets.html",            
+            template: "public/hicms.html",
+
+            // output as dist/index.html
+            filename: "index.html",
+            // when using title option,
+            // template title tag needs to be <title><%= htmlWebpackPlugin.options.title %></title>
+            title: "Tweets Page",
+            // chunks to include on this page, by default includes
+            // extracted common chunks and vendor chunks.
+            chunks: ["chunk-vendors", "chunk-common","tweets"]
+        },
+
+        indexOld: {
             // entry for the page
             entry: "src/pages/index/main.js",
             // the source template
-            template: "src/pages/index/index.html",
+            template: "src/pages/index/index-old.html",
             // output as dist/index.html
-            filename: "index.html",
+            filename: "index-old.html",
             // when using title option,
             // template title tag needs to be <title><%= htmlWebpackPlugin.options.title %></title>
             title: "Index Page",
@@ -47,22 +65,7 @@ module.exports = {
             // extracted common chunks and vendor chunks.
             chunks: ["chunk-vendors", "chunk-common", "task"]
         },
-        tweets: {
-            // entry for the page
-            entry: "src/pages/tweets/main.js",
-            // the source template
-            // template: "src/pages/tweets/tweets.html",            
-            template: "public/hicms.html",
-
-            // output as dist/index.html
-            filename: "tweets.html",
-            // when using title option,
-            // template title tag needs to be <title><%= htmlWebpackPlugin.options.title %></title>
-            title: "Tweets Page",
-            // chunks to include on this page, by default includes
-            // extracted common chunks and vendor chunks.
-            chunks: ["chunk-vendors", "chunk-common","tweets"]
-        },
+        
         modal: {
             
             entry: "src/pages/modal/main.js",

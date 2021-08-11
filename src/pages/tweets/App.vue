@@ -1,16 +1,17 @@
 l<template>
-  
   <teleport to=".hi-list">
-    <li class="hi-post-type-tweet w3-border-0 w3-margin-bottom" id="new-tweet-list">
-      <transition-group name="bubbleList" tag="ul"  >
-        <li v-for="bubble in pubBubbles" :key="bubble.post_id">    
-        <Bubble :bubble="bubble" @bubble:delete="handleBubbleDelete" />
+    <li
+      class="hi-post-type-tweet w3-border-0 w3-margin-bottom"
+      id="new-tweet-list"
+    >
+      <transition-group name="bubbleList" tag="ul">
+        <li v-for="bubble in pubBubbles" :key="bubble.post_id">
+          <Bubble :bubble="bubble" @bubble:delete="handleBubbleDelete" />
         </li>
       </transition-group>
     </li>
   </teleport>
 
-  
   <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin">
     <!-- <transition class="tweet-box-container w3-margin-bottom" v-if="hasLogin" name="fade" tag="div" appear> -->
     <form @submit.prevent="handleSubmit">
@@ -79,26 +80,25 @@ l<template>
     </form>
     <!-- </transition> -->
   </div>
-  
+
   <div class="w3-margin-large sns-login-div wider" v-else>
     <SnsLoginButtons :API_URL="API_URL" />
   </div>
-  
 </template>
 
 <script>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted ,watch,reactive} from "vue";
 
 import utils from "@/includes/utils.js"; //这个不会实时生效，需要重启构建
+import API from "@/includes/API.js";
 import { Snackbar as Msg } from "@varlet/ui"; // https://varlet.gitee.io/varlet-ui/#/zh-CN/snackbar
-import { Dialog } from '@varlet/ui'
-
+import { Dialog } from "@varlet/ui";
 
 import SnsLoginButtons from "@/components/SnsLoginButtons.vue";
 import Bubble from "@/components/Bubble.vue";
 
 export default {
-  components: { SnsLoginButtons,Bubble },
+  components: { SnsLoginButtons, Bubble },
 
   setup() {
     // async  function wait(seconds) {
@@ -106,11 +106,15 @@ export default {
     //     setTimeout(resolve,seconds)
     //   })
     // }
+    utils.StringPrototypes()
 
     
 
-
     const API_URL = utils.rtrim(process.env.VUE_APP_API_URL, "/");
+    //const API_URL = utils.rtrim('https://d.cellmean.com', "/");
+    const api = new API(API_URL);
+    //api.homeUrl = API_URL
+    const url = api.url;
 
     const hasLogin = ref(false);
 
@@ -131,81 +135,86 @@ export default {
     const contentPlaceholderText = ref(tweetPlaceHoder.blankText);
 
     const content = ref("");
-
+    
     const images = ref([]);
 
+    let bubbleFromStorage = reactive(JSON.parse(localStorage.getItem('bubble')))
+    if(!utils.isEmpty(bubbleFromStorage)) {      
+      !utils.isEmpty(bubbleFromStorage.content) && (content.value = bubbleFromStorage.content)
+      !utils.isEmpty(bubbleFromStorage.images) && (images.value = bubbleFromStorage.images)         
+    }else{
+      bubbleFromStorage = {}
+    }
+    
     const uploadingImages = ref(0);
     const tweetSending = ref(false);
     const tweetSendSucess = ref(false);
     // console.log(API_URL)
 
-     
     const pubBubbles = ref([
-      
-    //    {
-    //     "post_id": 9680,
-    //     "post_author": 12,
-    //     "post_date": "2021-07-17 12:49:03",
-    //     "post_date_local": "2021-07-17 20:49:03",
-    //     "post_content": "测试Bubble",
-    //     "post_title": "",
-    //     "post_name": "23415401",
-    //     "post_excerpt": "这是摘要..",
-    //     "post_status": "publish",
-    //     "comment_count": 0,
-    //     "post_modified": "2021-07-17 12:49:45",
-    //     "post_type": "tweet",
-    //     "like_count": 0,
-    //     "author_name": "Falcon",
-    //     "tweet_like_info": {
-    //         "author": "Falcon",
-    //         "id": "23415401",
-    //         "authorid": 0,
-    //         "body": "测试Bubble一条",
-    //         "portrait": "https://oscimg.oschina.net/oscnet/up-qtr2z6469a08hiocm005gfnnuta6yxly!/both/460x460?t=1569475632000",
-    //         "pubDate": "2021-07-17 20:49:03",
-    //         "commentCount": 0,
-    //         "likeCount": 0,
-    //         "oscAuthorid": 0,
-    //         "postId": 9680,
-    //         "postName": "23415401",
-    //         "postAuthor": 12,
-    //         "images": [
-    //             {
-    //                 "h": 0,
-    //                 "href": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
-    //                 "name": "up-c6rynoapidsgrswyngyb4isq122qwkb2",
-    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
-    //                 "type": "0",
-    //                 "w": 0
-    //             },
-    //             {
-    //                 "h": 0,
-    //                 "href": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
-    //                 "name": "up-upzegcum6ry2s21qpmze246gr1ht3c12",
-    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
-    //                 "type": "0",
-    //                 "w": 0
-    //             },
-    //             {
-    //                 "h": 0,
-    //                 "href": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0",
-    //                 "name": "up-d1q0renz73pifoqyd0rz914b84bc62d0",
-    //                 "thumb": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
-    //                 "type": "0",
-    //                 "w": 0
-    //             }
-    //         ],
-    //         "imgSmall": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
-    //         "imgBig": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0"
-    //     },
-    //     "user": {
-    //         "id": 12,
-    //         "username": "Falcon"
-    //     }
-    // }, 
-
-    ])
+      //    {
+      //     "post_id": 9680,
+      //     "post_author": 12,
+      //     "post_date": "2021-07-17 12:49:03",
+      //     "post_date_local": "2021-07-17 20:49:03",
+      //     "post_content": "测试Bubble",
+      //     "post_title": "",
+      //     "post_name": "23415401",
+      //     "post_excerpt": "这是摘要..",
+      //     "post_status": "publish",
+      //     "comment_count": 0,
+      //     "post_modified": "2021-07-17 12:49:45",
+      //     "post_type": "tweet",
+      //     "like_count": 0,
+      //     "author_name": "Falcon",
+      //     "tweet_like_info": {
+      //         "author": "Falcon",
+      //         "id": "23415401",
+      //         "authorid": 0,
+      //         "body": "测试Bubble一条",
+      //         "portrait": "https://oscimg.oschina.net/oscnet/up-qtr2z6469a08hiocm005gfnnuta6yxly!/both/460x460?t=1569475632000",
+      //         "pubDate": "2021-07-17 20:49:03",
+      //         "commentCount": 0,
+      //         "likeCount": 0,
+      //         "oscAuthorid": 0,
+      //         "postId": 9680,
+      //         "postName": "23415401",
+      //         "postAuthor": 12,
+      //         "images": [
+      //             {
+      //                 "h": 0,
+      //                 "href": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
+      //                 "name": "up-c6rynoapidsgrswyngyb4isq122qwkb2",
+      //                 "thumb": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
+      //                 "type": "0",
+      //                 "w": 0
+      //             },
+      //             {
+      //                 "h": 0,
+      //                 "href": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
+      //                 "name": "up-upzegcum6ry2s21qpmze246gr1ht3c12",
+      //                 "thumb": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
+      //                 "type": "0",
+      //                 "w": 0
+      //             },
+      //             {
+      //                 "h": 0,
+      //                 "href": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0",
+      //                 "name": "up-d1q0renz73pifoqyd0rz914b84bc62d0",
+      //                 "thumb": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
+      //                 "type": "0",
+      //                 "w": 0
+      //             }
+      //         ],
+      //         "imgSmall": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
+      //         "imgBig": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0"
+      //     },
+      //     "user": {
+      //         "id": 12,
+      //         "username": "Falcon"
+      //     }
+      // },
+    ]);
 
     const addImage = (image) => {
       // console.log(image);
@@ -214,11 +223,12 @@ export default {
 
       image.state = "loading";
       const formData = new FormData();
+      console.log(image.file);
+
       formData.append("image", image.file);
 
-      
       uploadingImages.value += 1;
-      fetch(API_URL + "/api/images", {
+      fetch(url.images, {
         method: "POST",
         mode: "cors",
         headers: {
@@ -250,7 +260,7 @@ export default {
             */
           (res) => {
             if (!res.success) {
-              throw Error(`${res.message} ${res.error.join(";")}`);
+              throw Error(api.apiErrorMsg(res));
             }
 
             image.state = "success";
@@ -263,7 +273,6 @@ export default {
           Msg.error(errorMsg);
         })
         .finally(() => (uploadingImages.value -= 1));
-      
     };
 
     const removeImage = () => {
@@ -323,7 +332,7 @@ export default {
       let sending = Msg.loading("玩命发送...");
       tweetSending.value = true;
 
-      fetch(API_URL + "/api/bubbles", {
+      fetch(url.bubbles, {
         method: "POST",
         mode: "cors",
         headers: {
@@ -337,7 +346,7 @@ export default {
         })
         .then((res) => {
           if (!res.success) {
-            throw Error(`${res.message} ${res.error.join(";")}`);
+            throw Error(api.apiErrorMsg(res));
           } else {
             sending.clear();
             tweetSendSucess.value = true;
@@ -348,20 +357,30 @@ export default {
 
             //setTimeout(() => location.reload(), 1200);
 
-            setTimeout(() => tweetSendSucess.value = false, 1000);
-            
+            setTimeout(() => (tweetSendSucess.value = false), 1000);
+
             //pubBubbles.value = [{post_content:"Hello new"}]
             const post = res.data;
-            return fetch(API_URL + "/api/bubbles/"+post.post_name)
-
+            const endPoint = url.bubbles + "/" + post.post_name;
+            return fetch(endPoint, {
+              method: "GET",
+              mode: "cors",
+              headers: {
+                "Content-Type": "application/json",
+                "Hi-Token": hiToken,
+              },
+            });
           }
-        }).then(res => {          
+        })
+        .then((res) => {
           return res.json();
-        }).then(res => {
-          if (!res.success) {throw Error(res.message);}
+        })
+        .then((res) => {
+          if (!res.success) {
+            throw Error(api.apiErrorMsg(res));
+          }
           let newBubble = res.data;
-          pubBubbles.value = [newBubble,...pubBubbles.value ]
-          
+          pubBubbles.value = [newBubble, ...pubBubbles.value];
         })
 
         .catch((err) => {
@@ -373,36 +392,31 @@ export default {
         .finally(() => (tweetSending.value = false));
     };
 
-  
-    
-
-    
-    const handleBubbleDelete = (postName) =>{
+    const handleBubbleDelete = (postName) => {
       /**处理动弹删除 */
-    // const actions = {
-    //   confirm: () => {
-        
-    //   },
-    //   cancel: () => Msg.error('cancel'),
-    //   close: () => Msg.info('close'),
-    // }
+      // const actions = {
+      //   confirm: () => {
 
-    const onBeforeClose = (action, done) => {
+      //   },
+      //   cancel: () => Msg.error('cancel'),
+      //   close: () => Msg.info('close'),
+      // }
 
-      if(action == 'confirm') {
-
-        const deletingMsg = Msg.loading('正在删除')        
-        fetch(API_URL + "/api/bubbles/"+postName, {
+      const onBeforeClose = (action, done) => {
+        if (action == "confirm") {
+          const deletingMsg = Msg.loading("正在删除");
+          const endPoint = url.bubbles + "/" + postName;
+          fetch(endPoint, {
             method: "DELETE",
             mode: "cors",
             headers: {
               "Content-Type": "application/json",
               "Hi-Token": hiToken,
-            },            
-        })
-        .then((res) => res.json())
-        .then(
-          /**
+            },
+          })
+            .then((res) => res.json())
+            .then(
+              /**
            * 格式如下：
            * {
                   "success": true,
@@ -411,46 +425,85 @@ export default {
                   "error": []
               }
             */
-          (res) => {
-            if (!res.success) {
-              throw Error(`${res.message} ${res.error.join(";")}`);
-            }
-            pubBubbles.value = pubBubbles.value.filter((bubble)=>bubble.post_name!=postName)
-            deletingMsg.clear();
-          }
-        )
-        .catch((err) => {          
-          errorMsg = "出错了：" + err.message;
-          Msg.error(errorMsg);
-        })
-        .finally(() => {          
-          done()
-        });        
-      }
-      
-      done();
-      
+              (res) => {
+                if (!res.success) {
+                  throw Error(utils.apiErrorMsg(res));
+                }
+                pubBubbles.value = pubBubbles.value.filter(
+                  (bubble) => bubble.post_name != postName
+                );
+                deletingMsg.clear();
+              }
+            )
+            .catch((err) => {
+              errorMsg = "出错了：" + err.message;
+              Msg.error(errorMsg);
+            })
+            .finally(() => {
+              done();
+            });
+        }
 
-    }
+        done();
+      };
 
-    Dialog({
-        title: '确实要删除这条动弹吗？',
-        message: '删除后不可恢复哦！',
-        onBeforeClose
+      Dialog({
+        title: "确实要删除这条动弹吗？",
+        message: "删除后不可恢复哦！",
+        onBeforeClose,
+      });
+    };
+
+    
+    //將動彈緩存在localstorage    
+
+    watch(content, (content) => {
+      bubbleFromStorage.content = content;
+      localStorage.setItem('bubble', JSON.stringify(bubbleFromStorage).escapeSpecialChars());
+    });    
+    watch(images, (images) => {
+      bubbleFromStorage.images = images;
+      localStorage.setItem('bubble', JSON.stringify(bubbleFromStorage).escapeSpecialChars());
     });
     
-        
-
-    }
 
     //hooks
     onMounted(() => {
-      const hiData = JSON.parse(localStorage.getItem("hiData"));
-      if (
-        hiData !== undefined &&
-        hiData.token !== undefined &&
-        hiData.expires !== undefined
-      ) {
+
+      //获取token
+      if (window.USER) {
+        hasLogin.value = true;
+        //hiToken = null;
+        fetch(api.url.tokens, {
+          method: "GET",
+        })
+          .then((res) => {
+            if (res.ok) {
+              // 此处加入响应状态码判断
+              return res.json();
+            } else {
+              throw Error(res.statusText);
+            }
+          })
+          .then((response) => {
+            hiToken = response.data.token;
+            return response;
+          })
+          .catch((err) => {
+            errorMsg = "出错了：" + err.message;
+            Msg.error(errorMsg);
+          });
+      } else {
+        
+        const hiData = JSON.parse(localStorage.getItem("hiData"));
+        if (
+          hiData == undefined ||
+          hiData.token == undefined ||
+          hiData.expires == undefined
+        ) {
+          return;
+        }
+
         if (hiData.expires - utils.time() < 0) {
           //过期
           localStorage.removeItem("hiData");
@@ -513,94 +566,89 @@ export default {
   margin-right: 0.5rem;
 }
 
-.w3-ul.hi-list #new-tweet-list{
+.w3-ul.hi-list #new-tweet-list {
   order: -1;
   padding: 0px;
   background: transparent;
   margin-bottom: 0 !important;
 }
 #new-tweet-list ul {
-     padding: 0;
-    list-style: none;
-    position: relative;
+  padding: 0;
+  list-style: none;
+  position: relative;
 }
-#new-tweet-list >ul li{
-    padding: 0 50px;
-    margin-bottom:16px
+#new-tweet-list > ul li {
+  padding: 0 50px;
+  margin-bottom: 16px;
 }
 .hi-tweet-content-wrap {
-  background-color: transparent !important;;
+  background-color: transparent !important;
 }
 
 @media (max-width: 600px) {
   .tweet-box-container {
     padding: 1rem;
   }
-  #new-tweet-list >ul li{
+  #new-tweet-list > ul li {
     padding: 0 16px;
   }
 }
 
-
-
-.bubbleList-enter-from{
-  opacity:0;
-  transform: translateX(250px);    
-  background-color: yellow!important;
-  
+.bubbleList-enter-from {
+  opacity: 0;
+  transform: translateX(250px);
+  background-color: yellow !important;
 }
-.bubbleList-enter-to{
-  opacity:1;
+.bubbleList-enter-to {
+  opacity: 1;
   /* transform: scale(1); */
   transform: translateX(0);
-  
-  background-color: #fec!important;  
+
+  background-color: #fec !important;
 }
-.bubbleList-enter-active{
+.bubbleList-enter-active {
   transition: all 1s ease;
 }
 
-.bubbleList-leave-from{
-  opacity:1;
-  transform: translateX(0);    
-  background-color: #fec!important;  
-  
-  
+.bubbleList-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+  background-color: #fec !important;
 }
-.bubbleList-leave-to{
-  opacity:0;
+.bubbleList-leave-to {
+  opacity: 0;
   /* transform: scale(1); */
-  transform: translateX(-250px);  
-  background-color: #fff!important;
+  transform: translateX(-250px);
+  background-color: #fff !important;
 }
-.bubbleList-leave-active{
+.bubbleList-leave-active {
   transition: all 1s ease;
   position: absolute; /** 删除bubble，旧的bullbe上移的关键点 */
 }
 
 /**新进的bubble，旧的bullbe下移 */
 .bubbleList-move {
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 
 .fade-enter-from {
-  opacity:0;
+  opacity: 0;
   transform: translateY(-500px);
 }
 .fade-enter-to {
   transform: translateY(0px);
-  opacity:1;
+  opacity: 1;
 }
-.fade-enter-active{
+.fade-enter-active {
   transition: all 1s ease;
 }
 .fade-leave-from {
-  opacity:1;
+  opacity: 1;
 }
 .fade-leave-to {
-  opacity:0;
+  opacity: 0;
 }
-.fade-leave-active{
+.fade-leave-active {
   transition: all 1s ease;
 }
 </style>>
