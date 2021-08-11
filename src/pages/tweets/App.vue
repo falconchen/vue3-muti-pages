@@ -1,4 +1,9 @@
 l<template>
+
+  <teleport to="body">  
+    <var-back-top :duration="500" class="d-back-to-top"/>  
+  </teleport>
+
   <teleport to=".hi-list">
     <li
       class="hi-post-type-tweet w3-border-0 w3-margin-bottom"
@@ -91,8 +96,8 @@ import { ref, computed, onMounted ,watch,reactive} from "vue";
 
 import utils from "@/includes/utils.js"; //这个不会实时生效，需要重启构建
 import API from "@/includes/API.js";
-import { Snackbar as Msg } from "@varlet/ui"; // https://varlet.gitee.io/varlet-ui/#/zh-CN/snackbar
-import { Dialog } from "@varlet/ui";
+import { Dialog, Snackbar as Msg } from "@varlet/ui"; // https://varlet.gitee.io/varlet-ui/#/zh-CN/snackbar
+//import {  } from "@varlet/ui";
 
 import SnsLoginButtons from "@/components/SnsLoginButtons.vue";
 import Bubble from "@/components/Bubble.vue";
@@ -461,8 +466,8 @@ export default {
       bubbleFromStorage.content = content;
       localStorage.setItem('bubble', JSON.stringify(bubbleFromStorage).escapeSpecialChars());
     });    
-    watch(images, (images) => {
-      bubbleFromStorage.images = images;
+    watch(mediaIds, () => {
+      bubbleFromStorage.images = images.value.filter((image)=>image.state == 'success');
       localStorage.setItem('bubble', JSON.stringify(bubbleFromStorage).escapeSpecialChars());
     });
     
@@ -650,6 +655,10 @@ export default {
 }
 .fade-leave-active {
   transition: all 1s ease;
+}
+.d-back-to-top{
+    right: 1rem;
+    bottom: 1rem;
 }
 </style>>
 

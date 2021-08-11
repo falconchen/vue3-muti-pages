@@ -5,7 +5,7 @@ import App from './App.vue'
 
 
 import { createApp } from 'vue'
-import {Uploader,Input,Button,Icon,Cell,Chip} from '@varlet/ui'
+import {Uploader,Input,Button,Icon,Cell,Chip,BackTop} from '@varlet/ui'
 //import '@varlet/ui/es/style.js' //按需引入
 
 //createApp(App).use(Uploader).use(Input).use(Button).mount('#app')
@@ -16,6 +16,7 @@ createApp(App)
 .use(Icon)
 .use(Cell)
 .use(Chip)
+.use(BackTop)
 .mount('#app')
 
 

@@ -3,9 +3,13 @@
 module.exports = {
     
     filenameHashing: false,
-    publicPath:process.env.NODE_ENV === 'production'    
-    ? '/vue-dist'
-    : '/',
+    // publicPath:process.env.NODE_ENV === 'production'    
+    // ? '/vue-dist'
+    // : '/',
+    publicPath:process.env.VUE_APP_PUBLIC_PATH !== undefined 
+    ?process.env.VUE_APP_PUBLIC_PATH
+    :'/'
+    ,    
     productionSourceMap:false,
     outputDir: process.env.OUTPUT_DIR !== undefined
     ? process.env.OUTPUT_DIR
