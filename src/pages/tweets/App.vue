@@ -1,12 +1,44 @@
 l<template>
+  <teleport to="#navbar .navbar-right">
+    
 
-  <teleport to="body">  
-    <var-back-top :duration="500" class="d-back-to-top"/>  
+    <li class="w3-dropdown-hover w3-left avatar-dropdown-hover" v-if="hasLogin">
+      
+      
+
+      <a class="w3-button w3-left-align"> 
+        <div class="portrait login-portrait" v-if="loginUser.avatar"><img :src="loginUser.avatar" /></div>
+        <i v-else class="fa fa-user-o"></i>       
+        <span class="username">{{ loginUser.username }}</span>
+        <i class="fa fa-angle-down"></i>
+      </a>
+
+      <ul class="w3-dropdown-content w3-bar-block w3-card-4 nav nabar">
+        <li>
+          <a class="" :href="`/@${loginUser.username}`">
+            <i class="fa fa-home"></i>
+            {{loginUser.username}}
+          </a>
+        </li>
+       
+      <li>
+        <a class="" href="/logout">
+          <i class="fa fa-sign-out"></i>
+          退出
+        </a>
+      </li>
+      </ul>
+    </li>
+    
+  </teleport>
+
+  <teleport to="body">
+    <var-back-top :duration="500" class="d-back-to-top" />
   </teleport>
 
   <teleport to=".hi-list">
     <li
-      class="hi-post-type-tweet w3-border-0 w3-margin-bottom"
+      class="hi-post-type-tweet w3-border-0 w3-margin-bottom new-tweet-list"
       id="new-tweet-list"
     >
       <transition-group name="bubbleList" tag="ul">
@@ -89,10 +121,13 @@ l<template>
   <div class="w3-margin-large sns-login-div wider" v-else>
     <SnsLoginButtons :API_URL="API_URL" />
   </div>
+  <teleport to=".hi-list">
+    <InfinityScroll class="w3-white w3-card w3-padding w3-center" :distance="300" @reach-distance="loadMore" />
+  </teleport>
 </template>
 
 <script>
-import { ref, computed, onMounted ,watch,reactive} from "vue";
+import { ref, computed, onMounted, watch, reactive } from "vue";
 
 import utils from "@/includes/utils.js"; //这个不会实时生效，需要重启构建
 import API from "@/includes/API.js";
@@ -101,22 +136,27 @@ import { Dialog, Snackbar as Msg } from "@varlet/ui"; // https://varlet.gitee.io
 
 import SnsLoginButtons from "@/components/SnsLoginButtons.vue";
 import Bubble from "@/components/Bubble.vue";
+import InfinityScroll from "@/components/InfinityScroll.vue"
 
 export default {
-  components: { SnsLoginButtons, Bubble },
+  components: { SnsLoginButtons, Bubble , InfinityScroll},
 
   setup() {
+
+
+    
     // async  function wait(seconds) {
     //   await new Promise(resolve=>{
     //     setTimeout(resolve,seconds)
     //   })
     // }
-    utils.StringPrototypes()
-
-    
+    utils.StringPrototypes();
 
     const API_URL = utils.rtrim(process.env.VUE_APP_API_URL, "/");
     //const API_URL = utils.rtrim('https://d.cellmean.com', "/");
+
+    const loginUser = ref({});
+
     const api = new API(API_URL);
     //api.homeUrl = API_URL
     const url = api.url;
@@ -140,17 +180,21 @@ export default {
     const contentPlaceholderText = ref(tweetPlaceHoder.blankText);
 
     const content = ref("");
-    
+
     const images = ref([]);
 
-    let bubbleFromStorage = reactive(JSON.parse(localStorage.getItem('bubble')))
-    if(!utils.isEmpty(bubbleFromStorage)) {      
-      !utils.isEmpty(bubbleFromStorage.content) && (content.value = bubbleFromStorage.content)
-      !utils.isEmpty(bubbleFromStorage.images) && (images.value = bubbleFromStorage.images)         
-    }else{
-      bubbleFromStorage = {}
+    let bubbleFromStorage = reactive(
+      JSON.parse(localStorage.getItem("bubble"))
+    );
+    if (!utils.isEmpty(bubbleFromStorage)) {
+      !utils.isEmpty(bubbleFromStorage.content) &&
+        (content.value = bubbleFromStorage.content);
+      !utils.isEmpty(bubbleFromStorage.images) &&
+        (images.value = bubbleFromStorage.images);
+    } else {
+      bubbleFromStorage = {};
     }
-    
+
     const uploadingImages = ref(0);
     const tweetSending = ref(false);
     const tweetSendSucess = ref(false);
@@ -459,25 +503,76 @@ export default {
       });
     };
 
-    
-    //將動彈緩存在localstorage    
+    //將動彈緩存在localstorage
 
     watch(content, (content) => {
       bubbleFromStorage.content = content;
-      localStorage.setItem('bubble', JSON.stringify(bubbleFromStorage).escapeSpecialChars());
-    });    
-    watch(mediaIds, () => {
-      bubbleFromStorage.images = images.value.filter((image)=>image.state == 'success');
-      localStorage.setItem('bubble', JSON.stringify(bubbleFromStorage).escapeSpecialChars());
+      localStorage.setItem(
+        "bubble",
+        JSON.stringify(bubbleFromStorage).escapeSpecialChars()
+      );
     });
+    watch(mediaIds, () => {
+      bubbleFromStorage.images = images.value.filter(
+        (image) => image.state == "success"
+      );
+      localStorage.setItem(
+        "bubble",
+        JSON.stringify(bubbleFromStorage).escapeSpecialChars()
+      );
+    });
+
+    //加载动弹列表
+    
+    let page = 0;
+    let loadingSwitch = false;
+    //const loadMore = () =>{console.log('loading')}
+    
+    const loadMore = () =>{
+
+      if( loadingSwitch ){
+        console.log('sdf')
+        return ;
+      }
+      loadingSwitch = true;
+      page++;
+      fetch(api.url.bubbles+'?page='+page, {
+          method: "GET",
+      }).then((res) => {
+            if (res.ok) {
+              // 此处加入响应状态码判断
+              return res.json();
+            } else {
+              throw Error(res.statusText);
+            }
+      }).then((res) => {
+        if (!res.success) {
+            throw Error(api.apiErrorMsg(res));
+        }else{          
+          let newBubbles = res.data;
+          //console.log(newBubbles);
+          pubBubbles.value = [...newBubbles, ...pubBubbles.value];
+        }
+        loadingSwitch =  false
+      })
+      .catch((err) => {
+        errorMsg = "出错了：" + err.message;
+        Msg.error(errorMsg);
+      }).finally(()=>{
+        
+      });
+
+
+    }
+    
     
 
     //hooks
     onMounted(() => {
-
       //获取token
       if (window.USER) {
         hasLogin.value = true;
+        loginUser.value = window.USER
         //hiToken = null;
         fetch(api.url.tokens, {
           method: "GET",
@@ -491,20 +586,20 @@ export default {
             }
           })
           .then((response) => {
-            hiToken = response.data.token;
-            return response;
+            hiToken = response.data.token;            
           })
           .catch((err) => {
             errorMsg = "出错了：" + err.message;
             Msg.error(errorMsg);
           });
+
       } else {
-        
         const hiData = JSON.parse(localStorage.getItem("hiData"));
         if (
           hiData == undefined ||
           hiData.token == undefined ||
-          hiData.expires == undefined
+          hiData.expires == undefined ||
+          hiData.user == undefined
         ) {
           return;
         }
@@ -516,8 +611,12 @@ export default {
         } else {
           hasLogin.value = true;
           hiToken = hiData.token;
+          //console.log(hiData.user);
+          loginUser.value = hiData.user;
         }
       }
+
+      loadMore() //加载动弹
     });
 
     return {
@@ -540,7 +639,10 @@ export default {
 
       pubBubbles,
       handleBubbleDelete,
-      //errorMsg
+      loginUser,
+      loadMore,
+      
+      
     };
   },
 };
@@ -656,10 +758,30 @@ export default {
 .fade-leave-active {
   transition: all 1s ease;
 }
-.d-back-to-top{
-    right: 1rem;
-    bottom: 1rem;
+.d-back-to-top {
+  right: 1rem;
+  bottom: 1rem;
 }
-</style>>
+
+#navbar .w3-dropdown-hover.avatar-dropdown-hover >.w3-button{
+      padding: 4px 16px 4px 8px;
+}
+.username{
+  display: inline-block;
+    width: 8px;
+    opacity: 0;
+}
+.login-portrait{
+  display: inline;
+}
+    
+.portrait.login-portrait img {
+  height:40px;
+  width:40px;
+}
+.w3-ul >li:not(.new-tweet-list){
+  display: none;
+}
+</style>
 
 
