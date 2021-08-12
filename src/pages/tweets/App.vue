@@ -121,9 +121,10 @@ l<template>
   <div class="w3-margin-large sns-login-div wider" v-else>
     <SnsLoginButtons :API_URL="API_URL" />
   </div>
+<!--   
   <teleport to=".hi-list">
     <InfinityScroll class="w3-white w3-card w3-padding w3-center" :distance="300" @reach-distance="loadMore" />
-  </teleport>
+  </teleport> -->
 </template>
 
 <script>
@@ -136,10 +137,10 @@ import { Dialog, Snackbar as Msg } from "@varlet/ui"; // https://varlet.gitee.io
 
 import SnsLoginButtons from "@/components/SnsLoginButtons.vue";
 import Bubble from "@/components/Bubble.vue";
-import InfinityScroll from "@/components/InfinityScroll.vue"
+//import InfinityScroll from "@/components/InfinityScroll.vue"
 
 export default {
-  components: { SnsLoginButtons, Bubble , InfinityScroll},
+  components: { SnsLoginButtons, Bubble },
 
   setup() {
 
