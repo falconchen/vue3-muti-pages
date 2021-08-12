@@ -2,7 +2,10 @@
 
 module.exports = {
     
-    filenameHashing: false,
+    filenameHashing: process.env.VUE_APP_FILENAME_HASHING !== undefined 
+    ? process.env.VUE_APP_FILENAME_HASHING
+    :false
+    ,    
     // publicPath:process.env.NODE_ENV === 'production'    
     // ? '/vue-dist'
     // : '/',
@@ -40,6 +43,24 @@ module.exports = {
             // extracted common chunks and vendor chunks.
             chunks: ["chunk-vendors", "chunk-common","tweets"]
         },
+        logout: {
+            // entry for the page
+            entry: "src/pages/logout/main.js",
+            // the source template
+            // template: "src/pages/tweets/tweets.html",            
+            template: "public/simple.html",
+
+            // output as dist/index.html
+            filename: "logout.html",
+            // when using title option,
+            // template title tag needs to be <title><%= htmlWebpackPlugin.options.title %></title>
+            title: "Logout Page",
+            // chunks to include on this page, by default includes
+            // extracted common chunks and vendor chunks.
+            chunks: ["chunk-vendors", "chunk-common","logout"]
+        },
+        
+
 
         indexOld: {
             // entry for the page
