@@ -1,5 +1,5 @@
 <template>  
-  <Tweet :tweet="tweet" @tweet:delete="$emit('bubble:delete',tweet.postName)"/>
+  <Tweet :tweet="tweet" :currentUser="currentUser" @tweet:delete="$emit('bubble:delete',tweet.postName)" />
   
 </template>
 
@@ -11,10 +11,18 @@ import Tweet from '@/components/Tweet.vue'
 export default {
   name: 'Bubble',
   components: {
-    Tweet    
+    Tweet,    
+    
   },
   props: {
-    bubble: Object
+    bubble: Object,
+    currentUser: {
+      type: Object,
+      // 对象或数组默认值必须从一个工厂函数获取
+      default: function () {
+        return { id: 0, href: "/" };
+      },
+    },    
   },
   emits:['bubble:delete'],
   

@@ -65,7 +65,7 @@
       </a>
 
       <a
-        v-if="currentUser.uid == tweet.postAuthor"
+        v-if="currentUser.id == tweet.postAuthor"
         class="hi-dot hi-text-lighter-blue"
         :href="`/post-admin/edit/${tweet.postName}`"
       >
@@ -76,7 +76,8 @@
         >查看</a
       >
 
-      <a        
+      <a
+        v-if="currentUser.id == tweet.postAuthor"        
         class="w3-text-white w3-grey w3-right w3-padding-small"
         href="javascript:;"
         @click.prevent="$emit('tweet:delete',tweet.postName)"
@@ -97,7 +98,7 @@ export default {
       type: Object,
       // 对象或数组默认值必须从一个工厂函数获取
       default: function () {
-        return { uid: 0, href: "/" };
+        return { id: 0, href: "/" };
       },
     },
   },

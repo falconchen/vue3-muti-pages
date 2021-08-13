@@ -43,7 +43,7 @@ l<template>
     >
       <transition-group name="bubbleList" tag="ul">
         <li v-for="bubble in pubBubbles" :key="bubble.post_id">
-          <Bubble :bubble="bubble" @bubble:delete="handleBubbleDelete" />
+          <Bubble :bubble="bubble" :currentUser="loginUser" @bubble:delete="handleBubbleDelete" />
         </li>
       </transition-group>
     </li>
@@ -184,17 +184,17 @@ export default {
 
     const images = ref([]);
 
-    let bubbleFromStorage = reactive(
-      JSON.parse(localStorage.getItem("bubble"))
-    );
-    if (!utils.isEmpty(bubbleFromStorage)) {
-      !utils.isEmpty(bubbleFromStorage.content) &&
-        (content.value = bubbleFromStorage.content);
-      !utils.isEmpty(bubbleFromStorage.images) &&
-        (images.value = bubbleFromStorage.images);
-    } else {
-      bubbleFromStorage = {};
-    }
+    let bubbleFromStorage = reactive({});
+
+    const bubbleFromStorageParsed = JSON.parse(localStorage.getItem("bubble"))
+    
+    if (!utils.isEmpty(bubbleFromStorageParsed)) {
+      !utils.isEmpty(bubbleFromStorageParsed.content) &&
+        (content.value = bubbleFromStorageParsed.content);
+      !utils.isEmpty(bubbleFromStorageParsed.images) &&
+        (images.value = bubbleFromStorageParsed.images);
+      bubbleFromStorage = bubbleFromStorageParsed
+    } 
 
     const uploadingImages = ref(0);
     const tweetSending = ref(false);
@@ -531,8 +531,7 @@ export default {
     
     const loadMore = () =>{
 
-      if( loadingSwitch ){
-        console.log('sdf')
+      if( loadingSwitch ){        
         return ;
       }
       loadingSwitch = true;
@@ -570,6 +569,8 @@ export default {
 
     //hooks
     onMounted(() => {
+
+      loadMore() //加载动弹
       //获取token
       if (window.USER) {
         hasLogin.value = true;
@@ -595,6 +596,7 @@ export default {
           });
 
       } else {
+
         const hiData = JSON.parse(localStorage.getItem("hiData"));
         if (
           hiData == undefined ||
@@ -617,7 +619,7 @@ export default {
         }
       }
 
-      loadMore() //加载动弹
+      
     });
 
     return {
