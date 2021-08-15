@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build:spa": "vue-cli-service build --mode spa && /Users/falcon/projects/js/falcon/deploy.sh",
+    "build:spa": "vue-cli-service build --mode spa && cd /Users/falcon/projects/js/falcon/ && ./deploy.sh && cd -",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

@@ -45,6 +45,9 @@
         
         <div class="clearfix"></div>
         <vue-easy-lightbox
+              :scrollDisabled="true"              
+              :moveDisabled="true"
+              :loop="true"
               :visible="imgVisible"
               :imgs="imgsBig"
               :index="imgIndex"

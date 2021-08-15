@@ -131,7 +131,7 @@ const utils = {
     /**
      * 获取url查询参数
      * @param {String} name 
-     * @returns string || null
+     * @returns string|null
      */
     getQueryString(name) {
         let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
