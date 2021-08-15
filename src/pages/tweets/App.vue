@@ -273,7 +273,7 @@ export default {
 
       image.state = "loading";
       const formData = new FormData();
-      console.log(image.file);
+      //console.log(image.file);
 
       formData.append("image", image.file);
 
@@ -312,9 +312,12 @@ export default {
             if (!res.success) {
               throw Error(api.apiErrorMsg(res));
             }
-
+            
             image.state = "success";
             image.media_id = res.data.media_id;
+            image.cover = API_URL+ res.data.origin_url
+            image.url = API_URL+ res.data.origin_url
+            //console.log(image)
           }
         )
         .catch((err) => {
@@ -514,6 +517,7 @@ export default {
       );
     });
     watch(mediaIds, () => {
+
       bubbleFromStorage.images = images.value.filter(
         (image) => image.state == "success"
       );
@@ -787,6 +791,11 @@ export default {
 }
 .w3-ul>li.hi-post-type-bubble:not(.new-tweet-list),
 .w3-ul>li.hi-post-type-tweet:not(.new-tweet-list){
+  display: none;
+  z-index: -1;
+}
+.homepage-tweet-body .hi-modal {
+  z-index:-1;
   display: none;
 }
 
