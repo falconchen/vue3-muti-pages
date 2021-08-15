@@ -72,28 +72,7 @@ const utils = {
         return Date.parse(new Date())/1000;
     },
 
-    /**
-     * 处理API响应的错误消息
-     * 
-     * @param Object res 
-     */
-    apiErrorMsg(res) {
-        
-        let errorArr = []
-        switch (typeof res.error) {
-            case  'string':
-                errorArr = [res.error];
-                break;
-            case  'object':                
-                errorArr = this.isArray(res.error)  
-                            ? res.error 
-                            : this.combinObjectKV(res.error);
-                break;
-            default:
-                return `${res.message}`;
-        }        
-        return `${res.message} ${errorArr.join("; ")}`;
-    },
+    
 
     /**
      * 合并对象的key和value到一个数组
@@ -148,6 +127,20 @@ const utils = {
         }
         return false;
     },
+
+    /**
+     * 获取url查询参数
+     * @param {String} name 
+     * @returns string || null
+     */
+    getQueryString(name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        let r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return decodeURIComponent(r[2]);
+        }
+        return null;
+     },
 
 }
 

@@ -525,7 +525,7 @@ export default {
 
     //加载动弹列表
     
-    let page = 0;
+    let page = ref(1);
     let loadingSwitch = false;
     //const loadMore = () =>{console.log('loading')}
     
@@ -535,8 +535,8 @@ export default {
         return ;
       }
       loadingSwitch = true;
-      page++;
-      fetch(api.url.bubbles+'?page='+page, {
+      
+      fetch(api.url.bubbles+'?page='+page.value, {
           method: "GET",
       }).then((res) => {
             if (res.ok) {
@@ -552,6 +552,7 @@ export default {
           let newBubbles = res.data;
           //console.log(newBubbles);
           pubBubbles.value = [...newBubbles, ...pubBubbles.value];
+          page.value = page.value + 1;
         }
         loadingSwitch =  false
       })
@@ -569,7 +570,9 @@ export default {
 
     //hooks
     onMounted(() => {
-
+      const pageArg = utils.getQueryString('page');
+      page.value = utils.isEmpty(pageArg) ? 0 : parseInt(pageArg)
+      
       loadMore() //加载动弹
       //获取token
       if (window.USER) {
