@@ -129,9 +129,9 @@ export default {
       const imgIndex = ref(0);      
       
       const imgsBig= ref( [] )
-      imgsBig.value = props.tweet.images ? props.tweet.images.map((img)=>{
-        //return { src:img.href, title:img.name}    
-        return img.href;
+      imgsBig.value = props.tweet.images ? props.tweet.images.map((img,idx)=>{
+        return { src:img.href, title:`${idx+1} / ${props.tweet.images.length}`}    
+        //return img.href;
       }) :[]
       
       const showImg = (idx) =>{
@@ -143,7 +143,7 @@ export default {
         imgVisible.value = false        
       }
 
-      watch(() => imgVisible, () => {        
+      watch(() => imgVisible.value, () => {        
         document.getElementsByTagName('html')[0]
         .style.overflowY= imgVisible.value ? 'hidden' :'auto';
       })
