@@ -102,7 +102,7 @@
 
 <script>
 //import { toRef } from 'vue';
-import {ref} from 'vue'
+import {ref,watch} from 'vue'
 import VueEasyLightbox from 'vue-easy-lightbox'
 export default {
   name: "Tweet",
@@ -136,17 +136,25 @@ export default {
       
       const showImg = (idx) =>{
         imgIndex.value = idx        
-        imgVisible.value = true
+        imgVisible.value = true                
       }
 
       const handleHide = () =>{
-        imgVisible.value = false
+        imgVisible.value = false        
       }
+
+      watch(() => imgVisible, () => {        
+        document.getElementsByTagName('html')[0]
+        .style.overflowY= imgVisible.value ? 'hidden' :'auto';
+      })
     
       return {imgVisible,imgIndex,imgsBig,showImg,handleHide}
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style>
+body {
+  position:'relative';
+}
 </style>
