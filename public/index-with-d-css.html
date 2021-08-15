@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <link
+        rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+                <link
+        rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+        
+        <link rel="stylesheet" href="https://d.cellmean.com/css/w3.min.css?ver=<%= VUE_APP_HICMS_VERSION %>">
+        <link rel="stylesheet" href="https://d.cellmean.com/css/prism.min.css">
+        <link rel="stylesheet" href="https://d.cellmean.com/css/hi-content.min.css?ver=<%= VUE_APP_HICMS_VERSION %>">
+        <link rel="stylesheet" href="https://d.cellmean.com/css/style.min.css?ver=<%= VUE_APP_HICMS_VERSION %>">
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+
+    <div id="layout-wrap">
+        <div id="layout" class="container w3-mobile w3-round "> 
+            <div id="app"></div>
+            <ul class="w3-ul  w3-mobile hi-list">
+    
+                <li></li>
+            </ul>
+        </div>
+    </div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

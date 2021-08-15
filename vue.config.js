@@ -66,7 +66,7 @@ module.exports = {
             // entry for the page
             entry: "src/pages/index/main.js",
             // the source template
-            template: "src/pages/index/index-old.html",
+            template: "public/index-with-d-css.html",
             // output as dist/index.html
             filename: "index-old.html",
             // when using title option,
@@ -74,7 +74,7 @@ module.exports = {
             title: "Index Page",
             // chunks to include on this page, by default includes
             // extracted common chunks and vendor chunks.
-            chunks: ["chunk-vendors", "chunk-common", "index"]
+            chunks: ["chunk-vendors", "chunk-common", "indexOld"]
         },
         task: {
             // entry for the page
