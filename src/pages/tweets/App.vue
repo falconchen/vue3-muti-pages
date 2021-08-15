@@ -785,9 +785,11 @@ export default {
   height:40px;
   width:40px;
 }
-.w3-ul >li:not(.new-tweet-list){
+.w3-ul>li.hi-post-type-bubble:not(.new-tweet-list),
+.w3-ul>li.hi-post-type-tweet:not(.new-tweet-list){
   display: none;
 }
+
 </style>
 
 

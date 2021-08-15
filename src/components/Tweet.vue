@@ -130,7 +130,11 @@ export default {
       
       const imgsBig= ref( [] )
       imgsBig.value = props.tweet.images ? props.tweet.images.map((img,idx)=>{
-        return { src:img.href, title:`${idx+1} / ${props.tweet.images.length}`}    
+        return { src:img.href, 
+                title:props.tweet.images.length > 1 
+                ?`${idx+1} / ${props.tweet.images.length}`
+                :''
+        }    
         //return img.href;
       }) :[]
       
