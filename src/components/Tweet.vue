@@ -27,7 +27,8 @@
           v-for="(image, index) in tweet.images"
           :key="index"
         >
-          <div class="gallery">
+          <div class="gallery" >
+            
             <img
               :src="image.thumb"
               :alt="image.name"
@@ -35,11 +36,20 @@
               height="200"
               :data-original="image.href"
               style="cursor: pointer"
-            />
-          </div>
-        </div>
+              @click="showImg(index)"
+            />            
 
+          </div>
+          
+        </div>
+        
         <div class="clearfix"></div>
+        <vue-easy-lightbox
+              :visible="imgVisible"
+              :imgs="imgsBig"
+              :index="imgIndex"
+              @hide="handleHide"
+            ></vue-easy-lightbox>
       </div>
       <!-- /.gallery-wrap -->
       <!--gallery end-->
@@ -89,8 +99,13 @@
 
 <script>
 //import { toRef } from 'vue';
+import {ref} from 'vue'
+import VueEasyLightbox from 'vue-easy-lightbox'
 export default {
   name: "Tweet",
+  components: {
+    VueEasyLightbox
+  },
   props: {
     tweet: Object,
 
@@ -104,10 +119,28 @@ export default {
   },
    emits: ['tweet:delete'],
 
-  setup() {
-    //setup(props) {
-    // const tweet2 = toRef(props, 'tweet') //tweet.likes
-    // return {tweet2}
+  setup(props) {
+    
+    
+      const imgVisible = ref(false);
+      const imgIndex = ref(0);      
+      
+      const imgsBig= ref( [] )
+      imgsBig.value = props.tweet.images ? props.tweet.images.map((img)=>{
+        //return { src:img.href, title:img.name}    
+        return img.href;
+      }) :[]
+      
+      const showImg = (idx) =>{
+        imgIndex.value = idx        
+        imgVisible.value = true
+      }
+
+      const handleHide = () =>{
+        imgVisible.value = false
+      }
+    
+      return {imgVisible,imgIndex,imgsBig,showImg,handleHide}
   },
 };
 </script>
