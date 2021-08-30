@@ -1,6 +1,8 @@
 //参考文档：https://cli.vuejs.org/zh/config
 
 module.exports = {
+    lintOnSave: false,
+
     
     filenameHashing: process.env.VUE_APP_FILENAME_HASHING !== undefined 
     ? process.env.VUE_APP_FILENAME_HASHING

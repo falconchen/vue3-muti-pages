@@ -35,7 +35,12 @@
 
       Github登录
     </a>
-  
+  <a class="thirdPartyLogin w3-btn w3-round w3-white  w3-padding-large" :href="API_URL + '/oauth/google'">
+
+                                    <img :src="API_URL + '/images/logo/google.png'" class="socail-logo google-logo" width="22">
+
+                                    Google登录
+                                </a>
 </template>
 
 <script>
