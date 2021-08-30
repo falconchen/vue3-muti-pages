@@ -22,7 +22,7 @@ l<template>
         </li>
        
       <li>
-        <a class="" href="/logout">
+        <a class="" :href="logoutUrl">
           <i class="fa fa-sign-out"></i>
           退出
         </a>
@@ -144,8 +144,8 @@ export default {
 
   setup() {
 
-
-    
+    //console.log(process.env.VUE_APP_PUBLIC_PATH)
+    const logoutUrl = ref( utils.rtrim(process.env.VUE_APP_PUBLIC_URL, "/") + '/logout')
     // async  function wait(seconds) {
     //   await new Promise(resolve=>{
     //     setTimeout(resolve,seconds)
@@ -651,7 +651,7 @@ export default {
       handleBubbleDelete,
       loginUser,
       loadMore,
-      
+      logoutUrl,
       
     };
   },
