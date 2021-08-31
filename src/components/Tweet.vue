@@ -161,4 +161,9 @@ export default {
 body {
   position:'relative';
 }
+.vel-img-wrapper .vel-img{
+    box-shadow: none;
+    background-color: transparent;
+}
+  
 </style>
