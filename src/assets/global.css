@@ -32,7 +32,7 @@
     list-style: none;
     position: relative;
   }
-  #new-tweet-list > ul li {
+  #new-tweet-list div > ul li {
     padding: 0 50px;
     margin-bottom: 16px;
   }
@@ -44,7 +44,7 @@
     .tweet-box-container {
       padding: 1rem;
     }
-    #new-tweet-list > ul li {
+    #new-tweet-list div > ul li {
       padding: 0 16px;
     }
   }

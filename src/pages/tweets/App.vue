@@ -48,11 +48,11 @@ l<template>
       :noResult="loadMoreNoResult"
     >
     
-        <ul>  
+        <transition-group name="bubbleList" tag="ul">              
         <li v-for="bubble in pubBubbles" :key="bubble.post_name">
           <Bubble :bubble="bubble" :currentUser="loginUser" @bubble:delete="handleBubbleDelete" />
         </li>
-        </ul>
+        </transition-group>
     
     </infinite-scroll>
 
