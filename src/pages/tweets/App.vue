@@ -49,7 +49,7 @@ l<template>
     >
     
         <ul>  
-        <li v-for="bubble in pubBubbles" :key="bubble.post_id">
+        <li v-for="bubble in pubBubbles" :key="bubble.post_name">
           <Bubble :bubble="bubble" :currentUser="loginUser" @bubble:delete="handleBubbleDelete" />
         </li>
         </ul>
@@ -60,7 +60,7 @@ l<template>
     </li>
   </teleport>
 
-  <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin" v-show="false">
+  <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin">
     <!-- <transition class="tweet-box-container w3-margin-bottom" v-if="hasLogin" name="fade" tag="div" appear> -->
     <form @submit.prevent="handleSubmit">
       <section class="tweet-fields tweet-content">
@@ -460,7 +460,7 @@ export default {
 
     //加载动弹列表
     
-    let page = ref(1);
+    const page = ref(1);
     let loadingSwitch = false;
     //const loadMore = () =>{console.log('loading')}
     
@@ -486,7 +486,8 @@ export default {
         }else{          
           let newBubbles = res.data;
           //console.log(newBubbles);
-          pubBubbles.value = [...newBubbles, ...pubBubbles.value];
+          //pubBubbles.value = [...newBubbles, ...pubBubbles.value];
+          pubBubbles.value = [ ...pubBubbles.value,...newBubbles,];
           page.value = page.value + 1;
         }
         loadingSwitch =  false
@@ -514,24 +515,24 @@ export default {
         hasLogin.value = true;
         loginUser.value = window.USER
         //hiToken = null;
-        fetch(api.url.tokens, {
-          method: "GET",
-        })
-          .then((res) => {
-            if (res.ok) {
-              // 此处加入响应状态码判断
-              return res.json();
-            } else {
-              throw Error(res.statusText);
-            }
-          })
-          .then((response) => {
-            hiToken = response.data.token;            
-          })
-          .catch((err) => {
-            errorMsg = "出错了：" + err.message;
-            Msg.error(errorMsg);
-          });
+        // fetch(api.url.tokens, {
+        //   method: "GET",
+        // })
+        //   .then((res) => {
+        //     if (res.ok) {
+        //       // 此处加入响应状态码判断
+        //       return res.json();
+        //     } else {
+        //       throw Error(res.statusText);
+        //     }
+        //   })
+        //   .then((response) => {
+        //     hiToken = response.data.token;            
+        //   })
+        //   .catch((err) => {
+        //     errorMsg = "出错了：" + err.message;
+        //     Msg.error(errorMsg);
+        //   });
 
       } else {
 
