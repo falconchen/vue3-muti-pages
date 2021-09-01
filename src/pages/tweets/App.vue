@@ -41,15 +41,26 @@ l<template>
       class="hi-post-type-tweet w3-border-0 w3-margin-bottom new-tweet-list"
       id="new-tweet-list"
     >
-      <transition-group name="bubbleList" tag="ul">
+      
+    <infinite-scroll
+      @infinite-scroll="loadMore"
+      :message="loadMoreMessage"
+      :noResult="loadMoreNoResult"
+    >
+    
+        <ul>  
         <li v-for="bubble in pubBubbles" :key="bubble.post_id">
           <Bubble :bubble="bubble" :currentUser="loginUser" @bubble:delete="handleBubbleDelete" />
         </li>
-      </transition-group>
+        </ul>
+    
+    </infinite-scroll>
+
+      
     </li>
   </teleport>
 
-  <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin">
+  <div class="tweet-box-container w3-margin-bottom" v-if="hasLogin" v-show="false">
     <!-- <transition class="tweet-box-container w3-margin-bottom" v-if="hasLogin" name="fade" tag="div" appear> -->
     <form @submit.prevent="handleSubmit">
       <section class="tweet-fields tweet-content">
@@ -129,6 +140,7 @@ l<template>
 
 <script>
 import { ref, computed, onMounted, watch, reactive } from "vue";
+import InfiniteScroll from 'infinite-loading-vue3';
 
 import utils from "@/includes/utils.js"; //这个不会实时生效，需要重启构建
 import API from "@/includes/API.js";
@@ -140,11 +152,10 @@ import Bubble from "@/components/Bubble.vue";
 //import InfinityScroll from "@/components/InfinityScroll.vue"
 
 export default {
-  components: { SnsLoginButtons, Bubble },
+  components: { InfiniteScroll,SnsLoginButtons, Bubble },
 
   setup() {
 
-    //console.log(process.env.VUE_APP_PUBLIC_PATH)
     const logoutUrl = ref( utils.rtrim(process.env.VUE_APP_PUBLIC_URL, "/") + '/logout')
     // async  function wait(seconds) {
     //   await new Promise(resolve=>{
@@ -154,12 +165,11 @@ export default {
     utils.StringPrototypes();
 
     const API_URL = utils.rtrim(process.env.VUE_APP_API_URL, "/");
-    //const API_URL = utils.rtrim('https://d.cellmean.com', "/");
 
     const loginUser = ref({});
 
     const api = new API(API_URL);
-    //api.homeUrl = API_URL
+    
     const url = api.url;
 
     const hasLogin = ref(false);
@@ -201,75 +211,10 @@ export default {
     const tweetSendSucess = ref(false);
     // console.log(API_URL)
 
-    const pubBubbles = ref([
-      //    {
-      //     "post_id": 9680,
-      //     "post_author": 12,
-      //     "post_date": "2021-07-17 12:49:03",
-      //     "post_date_local": "2021-07-17 20:49:03",
-      //     "post_content": "测试Bubble",
-      //     "post_title": "",
-      //     "post_name": "23415401",
-      //     "post_excerpt": "这是摘要..",
-      //     "post_status": "publish",
-      //     "comment_count": 0,
-      //     "post_modified": "2021-07-17 12:49:45",
-      //     "post_type": "tweet",
-      //     "like_count": 0,
-      //     "author_name": "Falcon",
-      //     "tweet_like_info": {
-      //         "author": "Falcon",
-      //         "id": "23415401",
-      //         "authorid": 0,
-      //         "body": "测试Bubble一条",
-      //         "portrait": "https://oscimg.oschina.net/oscnet/up-qtr2z6469a08hiocm005gfnnuta6yxly!/both/460x460?t=1569475632000",
-      //         "pubDate": "2021-07-17 20:49:03",
-      //         "commentCount": 0,
-      //         "likeCount": 0,
-      //         "oscAuthorid": 0,
-      //         "postId": 9680,
-      //         "postName": "23415401",
-      //         "postAuthor": 12,
-      //         "images": [
-      //             {
-      //                 "h": 0,
-      //                 "href": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
-      //                 "name": "up-c6rynoapidsgrswyngyb4isq122qwkb2",
-      //                 "thumb": "http://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2",
-      //                 "type": "0",
-      //                 "w": 0
-      //             },
-      //             {
-      //                 "h": 0,
-      //                 "href": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
-      //                 "name": "up-upzegcum6ry2s21qpmze246gr1ht3c12",
-      //                 "thumb": "http://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12",
-      //                 "type": "0",
-      //                 "w": 0
-      //             },
-      //             {
-      //                 "h": 0,
-      //                 "href": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0",
-      //                 "name": "up-d1q0renz73pifoqyd0rz914b84bc62d0",
-      //                 "thumb": "http://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
-      //                 "type": "0",
-      //                 "w": 0
-      //             }
-      //         ],
-      //         "imgSmall": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0!/sq/200",
-      //         "imgBig": "https://oscimg.oschina.net/oscnet/up-c6rynoapidsgrswyngyb4isq122qwkb2,https://oscimg.oschina.net/oscnet/up-upzegcum6ry2s21qpmze246gr1ht3c12,https://oscimg.oschina.net/oscnet/up-d1q0renz73pifoqyd0rz914b84bc62d0"
-      //     },
-      //     "user": {
-      //         "id": 12,
-      //         "username": "Falcon"
-      //     }
-      // },
+    const pubBubbles = ref([      
     ]);
 
     const addImage = (image) => {
-      // console.log(image);
-
-      // console.log(images.value)
 
       image.state = "loading";
       const formData = new FormData();
@@ -358,19 +303,7 @@ export default {
       return result.filter((item) => item != false);
     });
 
-    const handleSubmit = () => {
-      // const tweet = {
-      //   content :content.value,
-      //   images:images.value
-      // }
-      // const formData = new FormData()
-      // formData.append('content',content.value)
-      // if(images.value.length > 0) {
-      //   images.value.forEach((image,index)=>{
-      //     formData.append(`image[${index}]`, image.url)
-      //   })
-      // }
-      // console.log(formData)
+    const handleSubmit = () => {     
 
       const tweet = {
         content: content.value.trim(),
@@ -407,8 +340,6 @@ export default {
             contentPlaceholderText.value = tweetPlaceHoder.successText;
             content.value = "";
             images.value = [];
-
-            //setTimeout(() => location.reload(), 1200);
 
             setTimeout(() => (tweetSendSucess.value = false), 1000);
 
@@ -629,6 +560,10 @@ export default {
       
     });
 
+
+    const loadMoreNoResult = ref(false)
+    const loadMoreMessage = ref('');
+
     return {
       API_URL,
       hasLogin,
@@ -652,6 +587,9 @@ export default {
       loginUser,
       loadMore,
       logoutUrl,
+
+      loadMoreNoResult,
+      loadMoreMessage,
       
     };
   },

@@ -13,6 +13,7 @@
     "@varlet/ui": "^1.9.6",
     "core-js": "^3.6.5",
     "exif-js": "^2.3.0",
+    "infinite-loading-vue3": "^1.0.1",
     "vue": "^3.0.0",
     "vue-easy-lightbox": "^1.2.1"
   },
