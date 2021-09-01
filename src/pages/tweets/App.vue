@@ -460,7 +460,7 @@ export default {
 
     //加载动弹列表
     
-    const page = ref(1);
+    const page = ref(0);
     let loadingSwitch = false;
     //const loadMore = () =>{console.log('loading')}
     
@@ -470,7 +470,8 @@ export default {
         return ;
       }
       loadingSwitch = true;
-      
+      page.value = page.value > 0 ? page.value :1;
+
       fetch(api.url.bubbles+'?page='+page.value, {
           method: "GET",
       }).then((res) => {
@@ -487,7 +488,7 @@ export default {
           let newBubbles = res.data;
           //console.log(newBubbles);
           //pubBubbles.value = [...newBubbles, ...pubBubbles.value];
-          pubBubbles.value = [ ...pubBubbles.value,...newBubbles,];
+          pubBubbles.value = [ ...pubBubbles.value,...newBubbles];
           page.value = page.value + 1;
         }
         loadingSwitch =  false
