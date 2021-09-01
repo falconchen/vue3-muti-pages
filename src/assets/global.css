@@ -36,6 +36,12 @@
     padding: 0 50px;
     margin-bottom: 16px;
   }
+  #new-tweet-list .spinner{
+    border: 3px dashed #fff;
+  }
+  #new-tweet-list .spinner::before{
+    background: transparent;
+  }
   .hi-tweet-content-wrap {
     background-color: transparent !important;
   }
