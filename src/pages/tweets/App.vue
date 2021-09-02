@@ -516,24 +516,24 @@ export default {
         hasLogin.value = true;
         loginUser.value = window.USER
         //hiToken = null;
-        // fetch(api.url.tokens, {
-        //   method: "GET",
-        // })
-        //   .then((res) => {
-        //     if (res.ok) {
-        //       // 此处加入响应状态码判断
-        //       return res.json();
-        //     } else {
-        //       throw Error(res.statusText);
-        //     }
-        //   })
-        //   .then((response) => {
-        //     hiToken = response.data.token;            
-        //   })
-        //   .catch((err) => {
-        //     errorMsg = "出错了：" + err.message;
-        //     Msg.error(errorMsg);
-        //   });
+        fetch(api.url.tokens, {
+          method: "GET",
+        })
+          .then((res) => {
+            if (res.ok) {
+              // 此处加入响应状态码判断
+              return res.json();
+            } else {
+              throw Error(res.statusText);
+            }
+          })
+          .then((response) => {
+            hiToken = response.data.token;            
+          })
+          .catch((err) => {
+            errorMsg = "出错了：" + err.message;
+            Msg.error(errorMsg);
+          });
 
       } else {
 
