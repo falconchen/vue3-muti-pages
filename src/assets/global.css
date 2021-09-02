@@ -61,8 +61,7 @@
     background-color: yellow !important;
   }
   .bubbleList-enter-to {
-    opacity: 1;
-    /* transform: scale(1); */
+    opacity: 1;    
     transform: translateX(0);
   
     background-color: #fec !important;
@@ -77,8 +76,7 @@
     background-color: #fec !important;
   }
   .bubbleList-leave-to {
-    opacity: 0;
-    /* transform: scale(1); */
+    opacity: 0;    
     transform: translateX(-250px);
     background-color: #fff !important;
   }

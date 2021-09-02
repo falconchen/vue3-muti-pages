@@ -47,11 +47,17 @@ l<template>
       :message="loadMoreMessage"
       :noResult="loadMoreNoResult"
     >
-    
-        <transition-group name="bubbleList" tag="ul">              
-        <li v-for="bubble in pubBubbles" :key="bubble.post_name">
-          <Bubble :bubble="bubble" :currentUser="loginUser" @bubble:delete="handleBubbleDelete" />
-        </li>
+    <!-- name="bubbleList"  -->
+        <transition-group         
+          
+          tag="ul"
+          @before-enter="bubbleBeforeEnter"
+          @enter="bubbleEnter"
+          
+        >              
+          <li v-for="(bubble,index) in pubBubbles" :key="bubble.post_name" :data-index="index" :data-name="bubble.post_name">
+            <Bubble :bubble="bubble" :currentUser="loginUser" @bubble:delete="handleBubbleDelete" />
+          </li>
         </transition-group>
     
     </infinite-scroll>
@@ -139,8 +145,10 @@ l<template>
 </template>
 
 <script>
+
 import { ref, computed, onMounted, watch, reactive } from "vue";
 import InfiniteScroll from 'infinite-loading-vue3';
+import gsap from 'gsap';
 
 import utils from "@/includes/utils.js"; //这个不会实时生效，需要重启构建
 import API from "@/includes/API.js";
@@ -155,6 +163,11 @@ export default {
   components: { InfiniteScroll,SnsLoginButtons, Bubble },
 
   setup() {
+
+    let deletedBubblesCount = 0;
+    const bubblesPerPage = 12;
+
+
 
     const logoutUrl = ref( utils.rtrim(process.env.VUE_APP_PUBLIC_URL, "/") + '/logout')
     // async  function wait(seconds) {
@@ -416,6 +429,7 @@ export default {
                 pubBubbles.value = pubBubbles.value.filter(
                   (bubble) => bubble.post_name != postName
                 );
+                deletedBubblesCount++;                
                 deletingMsg.clear();
               }
             )
@@ -566,6 +580,40 @@ export default {
     const loadMoreNoResult = ref(false)
     const loadMoreMessage = ref('');
 
+
+    const bubbleBeforeEnter = (el) =>{
+        el.style.opacity = 0;
+        el.style.transform = 'translateX(250px)';
+    }
+
+    const bubbleEnter = (el,done) =>{
+        gsap.to(el,{
+          opacity:1,
+          x:0,
+          duration:0.8,
+          onComplete:done,
+          delay:( (parseInt(el.dataset.index) + deletedBubblesCount) % bubblesPerPage) * 0.5
+        });
+        
+    }
+
+  //   const bubbleLeave = (el) =>{
+  //       el.style.opacity = 1;  
+  //       el.style.backgroundColor= '#fec !important';   
+  //       el.style.transition = 'all 1s ease';
+  //       el.style.position= 'absolute'; /** 删除bubble，旧的bullbe上移的关键点 */   
+  //   }
+
+  // const bubbleAfterLeave = (el) =>{        
+  //       gsap.to(el,{
+  //         opacity:0,
+  //         x:-250,
+  //         duration:0.8,
+  //         onComplete:done,
+  //         delay: 0.3
+  //       });    
+  //   }
+
     return {
       API_URL,
       hasLogin,
@@ -592,7 +640,11 @@ export default {
 
       loadMoreNoResult,
       loadMoreMessage,
-      
+
+      bubbleBeforeEnter,
+      bubbleEnter,
+      // bubbleLeave,
+      // bubbleAfterLeave,
     };
   },
 };
