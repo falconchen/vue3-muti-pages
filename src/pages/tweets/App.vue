@@ -48,14 +48,16 @@ l<template>
       :noResult="loadMoreNoResult"
     >
     <!-- name="bubbleList"  -->
-        <transition-group         
-          
+        <transition-group 
+                          
           tag="ul"
           @before-enter="bubbleBeforeEnter"
           @enter="bubbleEnter"
+          @after-enter="bubbleAfterEnter"
+          @leave="bubbleLeave"
           
         >              
-          <li v-for="(bubble,index) in pubBubbles" :key="bubble.post_name" :data-index="index" :data-name="bubble.post_name">
+          <li v-for="(bubble,index) in bubbles" :key="bubble.post_name" :data-index="index" :data-name="bubble.post_name">
             <Bubble :bubble="bubble" :currentUser="loginUser" @bubble:delete="handleBubbleDelete" />
           </li>
         </transition-group>
@@ -165,8 +167,9 @@ export default {
   setup() {
 
     let deletedBubblesCount = 0;
+    let addedBubblesCount = 0;
     const bubblesPerPage = 12;
-
+    let justPubBubble ={};
 
 
     const logoutUrl = ref( utils.rtrim(process.env.VUE_APP_PUBLIC_URL, "/") + '/logout')
@@ -224,7 +227,7 @@ export default {
     const tweetSendSucess = ref(false);
     // console.log(API_URL)
 
-    const pubBubbles = ref([      
+    const bubbles = ref([      
     ]);
 
     const addImage = (image) => {
@@ -356,7 +359,7 @@ export default {
 
             setTimeout(() => (tweetSendSucess.value = false), 1000);
 
-            //pubBubbles.value = [{post_content:"Hello new"}]
+            //bubbles.value = [{post_content:"Hello new"}]
             const post = res.data;
             const endPoint = url.bubbles + "/" + post.post_name;
             return fetch(endPoint, {
@@ -377,7 +380,9 @@ export default {
             throw Error(api.apiErrorMsg(res));
           }
           let newBubble = res.data;
-          pubBubbles.value = [newBubble, ...pubBubbles.value];
+          bubbles.value = [newBubble, ...bubbles.value];
+          addedBubblesCount++
+          justPubBubble = newBubble;
         })
 
         .catch((err) => {
@@ -426,7 +431,7 @@ export default {
                 if (!res.success) {
                   throw Error(utils.apiErrorMsg(res));
                 }
-                pubBubbles.value = pubBubbles.value.filter(
+                bubbles.value = bubbles.value.filter(
                   (bubble) => bubble.post_name != postName
                 );
                 deletedBubblesCount++;                
@@ -475,6 +480,9 @@ export default {
     //加载动弹列表
     
     const page = ref(0);
+    const pageArg = utils.getQueryString('page');
+    page.value = utils.isEmpty(pageArg) ? 0 : parseInt(pageArg)
+
     let loadingSwitch = false;
     //const loadMore = () =>{console.log('loading')}
     
@@ -484,6 +492,7 @@ export default {
         return ;
       }
       loadingSwitch = true;
+      
       page.value = page.value > 0 ? page.value :1;
 
       fetch(api.url.bubbles+'?page='+page.value, {
@@ -501,8 +510,8 @@ export default {
         }else{          
           let newBubbles = res.data;
           //console.log(newBubbles);
-          //pubBubbles.value = [...newBubbles, ...pubBubbles.value];
-          pubBubbles.value = [ ...pubBubbles.value,...newBubbles];
+          //bubbles.value = [...newBubbles, ...bubbles.value];
+          bubbles.value = [ ...bubbles.value,...newBubbles];
           page.value = page.value + 1;
         }
         loadingSwitch =  false
@@ -521,8 +530,7 @@ export default {
 
     //hooks
     onMounted(() => {
-      const pageArg = utils.getQueryString('page');
-      page.value = utils.isEmpty(pageArg) ? 0 : parseInt(pageArg)
+      
       
       loadMore() //加载动弹
       //获取token
@@ -582,27 +590,55 @@ export default {
 
 
     const bubbleBeforeEnter = (el) =>{
+
+        
         el.style.opacity = 0;
+        if( !utils.isEmpty(justPubBubble.post_name) 
+          && el.dataset.name == justPubBubble.post_name
+        ){
+            el.style.backgroundColor = '#0f0';
+        }
+        
         el.style.transform = 'translateX(250px)';
     }
 
     const bubbleEnter = (el,done) =>{
+        let duration = 1;
+        if( !utils.isEmpty(justPubBubble.post_name) 
+          && el.dataset.name == justPubBubble.post_name
+        ){
+          duration = 2;
+        }
+
         gsap.to(el,{
+          backgroundColor:'#fff',
           opacity:1,
           x:0,
-          duration:0.8,
+          duration:duration,
           onComplete:done,
-          delay:( (parseInt(el.dataset.index) + deletedBubblesCount) % bubblesPerPage) * 0.5
+          delay:( (parseInt(el.dataset.index) + deletedBubblesCount - addedBubblesCount) % bubblesPerPage) * 0.5
         });
         
     }
 
-  //   const bubbleLeave = (el) =>{
-  //       el.style.opacity = 1;  
-  //       el.style.backgroundColor= '#fec !important';   
-  //       el.style.transition = 'all 1s ease';
-  //       el.style.position= 'absolute'; /** 删除bubble，旧的bullbe上移的关键点 */   
-  //   }
+  const bubbleAfterEnter = (el) =>{
+
+        el.style.opacity = 1;
+        el.style.transform = 'none';        
+  }
+
+  const bubbleLeave = (el,done) =>{
+    gsap.to(el,{
+        opacity:0,
+        x:-500,
+        duration:0.8,
+        onComplete:done,
+        position: 'absolute',
+        backgroundColor:'#ccc'
+      });      
+  }
+  
+
 
   // const bubbleAfterLeave = (el) =>{        
   //       gsap.to(el,{
@@ -632,7 +668,7 @@ export default {
       tweetSending,
       tweetSendSucess,
 
-      pubBubbles,
+      bubbles,
       handleBubbleDelete,
       loginUser,
       loadMore,
@@ -643,7 +679,8 @@ export default {
 
       bubbleBeforeEnter,
       bubbleEnter,
-      // bubbleLeave,
+      bubbleAfterEnter,
+      bubbleLeave,      
       // bubbleAfterLeave,
     };
   },
