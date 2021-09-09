@@ -141,3 +141,6 @@
     display: none;
   }
   
+.vel-img{
+    min-width: 33vw;
+}
