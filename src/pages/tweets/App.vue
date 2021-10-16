@@ -202,7 +202,7 @@ export default {
 
     let errorMsg = "";
 
-    const tweetMaxLength = 320;
+    const tweetMaxLength = 640;
 
     const contentPlaceholderText = ref(tweetPlaceHoder.blankText);
 
