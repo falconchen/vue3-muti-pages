@@ -140,7 +140,20 @@
     z-index:-1;
     display: none;
   }
-  
-.vel-img{
+
+
+  .vel-img-title {
+    padding: 4px 8px;
+    background: #2d2d2d;
+    border-radius: 4px;
+    color: #fff;
+    bottom:55px;
+  }
+.vel-img[src$='.gif']{
     min-width: 33vw;
+}
+@media (max-width: 750px) {
+    .vel-img[src$='.gif']{
+        min-width: 66vw;
+    }
 }
