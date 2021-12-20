@@ -95,14 +95,17 @@ l<template>
 
       <section class="tweet-fields tweet-topics" v-if="tweetTopics.length">
         <span><var-icon name="fire" />动弹话题</span>
-        <var-chip
-          class="tweet-topic"
+        <var-chip          
+          :class="{checked:topic.checked,'tag':true}"
           plain
-          type="primary"
+          size="small"
+          type="info"
+          :round="false"
           v-for="topic in tweetTopics"
           :key="topic"
+          @click="toggleTopic(topic)"
         >
-          {{ topic }}
+          #{{ topic.tag }}
         </var-chip>
       </section>
 
@@ -191,8 +194,8 @@ export default {
     const hasLogin = ref(false);
 
     const tweetPlaceHoder = {
-      blankText: "不动弹，勿宁死！",
-      tweetingText: "动弹进行时",
+      blankText: "",
+      tweetingText: "动弹ing",
       successText: "刚才你动弹了！",
     };
 
@@ -312,11 +315,43 @@ export default {
 
     /*提取动弹话题*/
     const tweetTopics = computed(() => {
+      /**
+       *数据结构应该是样的 
+       [
+        {tag:'daily tips','checked':true},
+        {tag:'reading','checked':false},
+       ]
+       */
+
+      const hotTopics =['daily tips','读书笔记'];
+
       const re = /#([^#]*)#/g;
       const result = [...content.value.matchAll(re)].map((item) =>
         item[1].replace(/^\s|\s$/, "")
       );
-      return result.filter((item) => item != false);
+      const contentTopics = result.filter((item) => item != false);
+      let contentTopicsRestructed =[]
+      if(contentTopics.length >0) {
+        contentTopicsRestructed = contentTopics.map(item =>{
+          return {tag:item, checked:true}
+        } )
+        
+        for (const t of hotTopics) {
+          if(!contentTopics.includes(t)){
+            contentTopicsRestructed = [...contentTopicsRestructed,{tag:t,checked:false}]
+          }
+        }
+
+      }else{
+        contentTopicsRestructed = hotTopics.map(item=>{
+          return {tag:item, checked:false}
+        })
+      }
+      
+        //console.log(contentTopicsRestructed);      
+      return contentTopicsRestructed;
+
+      
     });
 
     const handleSubmit = () => {     
@@ -638,7 +673,15 @@ export default {
       });      
   }
   
-
+  const toggleTopic = (topic)=>{
+    if(topic.checked) {
+      content.value = content.value.replace(`#${topic.tag}# `,'');      
+    }else{
+      content.value += `#${topic.tag}# `      
+    }
+    
+  }
+  
 
   // const bubbleAfterLeave = (el) =>{        
   //       gsap.to(el,{
@@ -682,6 +725,7 @@ export default {
       bubbleAfterEnter,
       bubbleLeave,      
       // bubbleAfterLeave,
+      toggleTopic,
     };
   },
 };

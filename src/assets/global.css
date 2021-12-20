@@ -45,7 +45,17 @@
   .hi-tweet-content-wrap {
     background-color: transparent !important;
   }
-  
+  .tweet-box-container .tweet-fields.tweet-topics {
+    margin-top: 0;
+  }
+  .tweet-topics > .tag{
+    cursor: pointer;
+  }
+  .tweet-topics >.checked {
+    color:#fff;
+    background-color: #3a7afe;
+  }
+
   @media (max-width: 600px) {
     .tweet-box-container {
       padding: 1rem;
