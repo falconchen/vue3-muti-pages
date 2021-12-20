@@ -77,7 +77,7 @@ l<template>
           @focus="placehoderToggle"
           @blur="placehoderToggle"
           :maxlength="tweetMaxLength"
-          :rows="8"
+          :rows="6"
           textarea
           v-model="content"
         />
@@ -94,7 +94,7 @@ l<template>
       </section>
 
       <section class="tweet-fields tweet-topics" v-if="tweetTopics.length">
-        <span><var-icon name="fire" />动弹话题</span>
+        <h6 class="w3-bold"><var-icon name="fire" />话题</h6>
         <var-chip          
           :class="{checked:topic.checked,'tag':true}"
           plain
@@ -105,7 +105,7 @@ l<template>
           :key="topic"
           @click="toggleTopic(topic)"
         >
-          #{{ topic.tag }}
+          {{ topic.tag }}
         </var-chip>
       </section>
 

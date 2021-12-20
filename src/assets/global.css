@@ -13,7 +13,7 @@
   .tweet-box-container .tweet-content textarea {
     color: #333;
     /* font-weight: 500; */
-    font-size: 1.25rem !important;
+    font-size: 1rem !important;
     font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma,
       "Hiragino Sans GB", STHeiti;
   }
@@ -50,6 +50,7 @@
   }
   .tweet-topics > .tag{
     cursor: pointer;
+    margin-bottom: 0.4rem;
   }
   .tweet-topics >.checked {
     color:#fff;
