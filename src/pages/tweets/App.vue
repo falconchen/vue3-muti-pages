@@ -323,7 +323,7 @@ export default {
        ]
        */
 
-      const hotTopics =['daily tips','读书笔记'];
+      const hotTopics =['《亲密关系》笔记','《跑步圣经》笔记','daily tips','读书笔记',];
 
       const re = /#([^#]*)#/g;
       const result = [...content.value.matchAll(re)].map((item) =>
