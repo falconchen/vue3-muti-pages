@@ -77,7 +77,7 @@ l<template>
           @focus="placehoderToggle"
           @blur="placehoderToggle"
           :maxlength="tweetMaxLength"
-          :rows="6"
+          :rows="7"
           textarea
           v-model="content"
         />
