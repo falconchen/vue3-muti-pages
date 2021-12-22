@@ -276,11 +276,15 @@ export default {
             if (!res.success) {
               throw Error(api.apiErrorMsg(res));
             }
+            setTimeout(()=>{
+
+              image.state = "success";
+              image.media_id = res.data.media_id;
+              image.cover = API_URL+ res.data.cover;
+              image.url = API_URL+ res.data.origin_url
+              
+            },300)
             
-            image.state = "success";
-            image.media_id = res.data.media_id;
-            image.cover = API_URL+ res.data.origin_url
-            image.url = API_URL+ res.data.origin_url
             //console.log(image)
           }
         )
