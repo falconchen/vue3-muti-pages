@@ -327,7 +327,7 @@ export default {
        ]
        */
 
-      const hotTopics =['读书笔记','daily tips',];
+      const hotTopics =['读书笔记','daily tips','idea'];
 
       const re = /#([^#]*)#/g;
       const result = [...content.value.matchAll(re)].map((item) =>
@@ -681,7 +681,7 @@ export default {
     if(topic.checked) {
       content.value = content.value.replace(`#${topic.tag}# `,'');      
     }else{
-      content.value += `#${topic.tag}# `      
+      content.value = `#${topic.tag}# ${content.value}`      
     }
     
   }
