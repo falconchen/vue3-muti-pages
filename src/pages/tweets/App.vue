@@ -327,7 +327,7 @@ export default {
        ]
        */
 
-      const hotTopics =['读书','daily tips','idea','书单'];
+      const hotTopics = window.hotTopics || ['读书','daily tips','idea','书单'];
 
       const re = /#([^#]*)#/g;
       const result = [...content.value.matchAll(re)].map((item) =>

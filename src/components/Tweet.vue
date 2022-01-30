@@ -91,10 +91,10 @@
 
       <a
         v-if="currentUser.id == tweet.postAuthor"        
-        class="w3-text-white w3-grey w3-right w3-padding-small"
+        class="w3-right w3-padding-small w3-opacity hi-weight-normal"
         href="javascript:;"
         @click.prevent="$emit('tweet:delete',tweet.postName)"
-        >删除</a
+        ><i class="fa fa-trash-o hi-margin-right-small"></i>删除</a
       >
     </div>
   </div>
