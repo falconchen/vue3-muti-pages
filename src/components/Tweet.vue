@@ -2,7 +2,9 @@
   <div class="w3-padding-bottom hi-excerpt">
     <div class="hi-tweet-header-wrap">
       <div class="portrait">
+        <a class="tweet-author" :href="`/@${tweet.author}`">
         <img :src="tweet.portrait" style="cursor: pointer" />
+        </a>
       </div>
 
       <a class="tweet-author" :href="`/@${tweet.author}`">{{ tweet.author }}</a>
@@ -98,6 +100,8 @@
       >
     </div>
   </div>
+  <a v-if="currentUser.id == tweet.postAuthor" class="hi-op-b" :href="`/post-admin/edit/${tweet.postName}`" >  
+  </a>
 </template>
 
 <script>
@@ -165,5 +169,41 @@ body {
     box-shadow: none;
     background-color: transparent;
 }
-  
+.hi-op-b,.hi-op-t{
+    width: 0;
+    height: 0;
+    /* border-bottom: 30px solid #2d709b; */
+    border-bottom: 2.5rem solid  #2d709b;    
+    border-left: 2.5rem solid transparent;
+    position: absolute;    
+    z-index: 0;
+    transition: 150ms ease-in-out;
+}  
+.hi-op-b:focus,
+.hi-op-b:hover
+{
+    border-bottom: 3rem solid  #2d709b; 
+    border-left: 3rem solid transparent;
+}
+.hi-op-b{
+    top: auto;
+    right: 0;
+    bottom: -1px;
+    left: auto;
+}
+
+.hi-op-t{  
+    border-top: 2.5rem solid #EE6E73;  
+    border-right: 2.5rem solid transparent;  
+    top: 0;
+    right: auto;
+    bottom: auto;
+    left: 0;
+    
+}  
+.hi-op-t:focus,
+.hi-op-t:hover{
+  border-top: 3rem solid #EE6E73;  
+  border-right:3rem solid transparent;  
+}
 </style>
